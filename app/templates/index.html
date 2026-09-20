@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<title>Nakuru Gaz Gang</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header><div class="brand">🦩🔥 <strong>Nakuru Gaz Gang</strong></div><div class="tagline">Reliable on time clean and strong.</div><a class="phone" href="tel:0710525480">📞 0710525480</a></header>
+<main>
+<section class="hero"><h1>Water, Gas & Local Technical Services</h1><p>Serving Nakuru with delivery and practical technology support.</p></section>
+<section class="values"><div><h2>Our Vision</h2><p>Reliable on time clean and strong.</p></div><div><h2>Our Mission</h2><p>To provide dependable water, gas delivery and authorized technical support to customers in Nakuru.</p></div></section>
+<section><h2>Products</h2><div id="products" class="grid">
+{% for p in products %}<article class="card"><h3>{{ p.name }}</h3><p>{{ p.description }}</p><p><strong>{% if p.price %}KSh {{ "%.2f"|format(p.price) }}{% else %}Price confirmed before service{% endif %}</strong> / {{ p.unit }}</p><button type="button" class="add-product" data-id="{{ p.id }}" data-name="{{ p.name }}">Add to order</button></article>{% endfor %}
+</div></section>
+<section><h2>Services</h2><div class="grid">{% for category in ["Technology & Network Services","Delivery Services"] %}<div class="card"><h3>{{ category }}</h3><ul>{% for s in services if s.category == category %}<li><button type="button" class="linkbutton choose-service" data-id="{{ s.id }}">{{ s.name }}</button></li>{% endfor %}</ul></div>{% endfor %}</div></section>
+<section class="panel"><h2>Place an Order</h2><div id="cart">Your cart is empty.</div><input id="orderName" placeholder="Your name"><input id="orderPhone" placeholder="Phone number"><input id="orderArea" placeholder="Delivery area in Nakuru"><textarea id="orderNotes" placeholder="Notes"></textarea><p><strong>Payment:</strong> 0710525480</p><button type="button" id="submitOrder">Submit Order</button><p id="orderResult"></p></section>
+<section class="panel"><h2>Request a Service</h2><select id="serviceSelect"><option value="">Choose a service</option>{% for s in services %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}</select><input id="serviceName" placeholder="Your name"><input id="servicePhone" placeholder="Phone number"><input id="serviceArea" placeholder="Area"><textarea id="serviceDescription" placeholder="Describe what you need"></textarea><button type="button" id="submitService">Request Service</button><p id="serviceResult"></p></section>
+<section class="contact"><h2>Contact</h2><p>📞 <a href="tel:0710525480">0710525480</a> — customer care & payment</p>{% if email_public %}<p>📧 <a href="mailto:redgroup@gmail.com">redgroup@gmail.com</a></p>{% else %}<p>📧 Customer-care email is available to eligible customers/authorized parties during the initial operating period.</p>{% endif %}</section>
+</main><footer>Nakuru Gaz Gang • Nakuru, Kenya</footer><script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body></html>

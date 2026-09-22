@@ -295,12 +295,4 @@ def admin_logout():
 def admin():
     if not session.get("admin"):
         abort(403)
-    return jsonify({
-        "orders": Order.query.count(),
-        "service_requests": ServiceRequest.query.count(),
-        "products": Product.query.count(),
-        "services": Service.query.count(),
-        "customers": User.query.filter_by(role="customer").count(),
-        "email_public": email_public(),
-        "payment_and_customer_care": "0710525480",
-    })
+    return render_template("admin_dashboard.html", stats={"orders": Order.query.count(), "service_requests": ServiceRequest.query.count(), "products": Product.query.count(), "services": Service.query.count(), "customers": User.query.filter_by(role="customer").count(), "email_public": email_public(), "payment_and_customer_care": "0710525480"})

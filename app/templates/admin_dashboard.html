@@ -1,0 +1,66 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nakuru Gaz Gang — Admin</title>
+<style>
+body{margin:0;background:#f4f4f4;color:#111;font-family:"Courier New",monospace}
+header{background:#111;color:#fff;padding:20px;display:flex;justify-content:space-between;align-items:center}
+main{width:94%;max-width:1100px;margin:30px auto}
+h1,h2{margin-top:0}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}
+.card,.section{background:#fff;border:1px solid #ccc;padding:20px}
+.card{min-height:90px}
+.number{font-size:30px;font-weight:bold;margin-top:10px}
+.section{margin-top:25px}
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.tool{border:1px solid #111;padding:15px;text-decoration:none;color:#111;font-weight:bold}
+.tool:hover{background:#eee}
+button{padding:10px 16px;font-family:inherit;font-weight:bold;cursor:pointer}
+</style>
+</head>
+<body>
+
+<header>
+<h1>NAKURU GAZ GANG — ADMIN</h1>
+<form method="POST" action="{{ url_for('main.admin_logout') }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<button type="submit">LOG OUT</button>
+</form>
+</header>
+
+<main>
+<h2>Admin Dashboard</h2>
+<p>Manage and monitor the Nakuru Gaz Gang website.</p>
+
+<div class="stats">
+<div class="card">PRODUCTS<div class="number">{{ stats.products }}</div></div>
+<div class="card">SERVICES<div class="number">{{ stats.services }}</div></div>
+<div class="card">CUSTOMERS<div class="number">{{ stats.customers }}</div></div>
+<div class="card">ORDERS<div class="number">{{ stats.orders }}</div></div>
+<div class="card">SERVICE REQUESTS<div class="number">{{ stats.service_requests }}</div></div>
+</div>
+
+<div class="section">
+<h2>Management</h2>
+<div class="tools">
+<a class="tool" href="#">PRODUCTS & PRICES</a>
+<a class="tool" href="#">SERVICES</a>
+<a class="tool" href="#">ORDERS</a>
+<a class="tool" href="#">CUSTOMERS</a>
+<a class="tool" href="#">SERVICE REQUESTS</a>
+<a class="tool" href="#">BUSINESS SETTINGS</a>
+</div>
+</div>
+
+<div class="section">
+<h2>Business Information</h2>
+<p><strong>Payment / Customer Care:</strong> {{ stats.payment_and_customer_care }}</p>
+<p><strong>Business Email Public:</strong> {{ "YES" if stats.email_public else "NO" }}</p>
+</div>
+
+</main>
+</body>
+</html>

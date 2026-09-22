@@ -268,6 +268,11 @@ def create_service_request():
     return jsonify(message="Service request received.", request_id=r.id)
 
 
+@main.get("/admin/login")
+def admin_login_page():
+    return render_template("admin_login.html")
+
+
 @main.post("/admin/login")
 @limiter.limit("5 per minute")
 def admin_login():

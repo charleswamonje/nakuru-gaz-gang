@@ -84,6 +84,9 @@ a {
         <label>Description</label><br>
         <textarea name="description" rows="3"></textarea><br>
 
+        <label>Image URL</label><br>
+        <input name="image_url" placeholder="https://example.com/product-image.jpg"><br>
+
         <button type="submit">ADD PRODUCT</button>
     </form>
 </div>
@@ -113,6 +116,9 @@ a {
 
             <label>Description</label><br>
             <textarea name="description" rows="3">{{ product.description }}</textarea><br>
+
+            <label>Image URL</label><br>
+            <input name="image_url" value="{{ product.image_url or '' }}" placeholder="https://example.com/product-image.jpg"><br>
 
             <button type="submit">SAVE CHANGES</button>
         </form>

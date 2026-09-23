@@ -23,6 +23,7 @@ class Product(db.Model):
     unit = db.Column(db.String(40), nullable=False)
     active = db.Column(db.Boolean, default=True, nullable=False, index=True)
     description = db.Column(db.String(500), default="")
+    image_url = db.Column(db.String(500), default="")
 
 
 class Service(db.Model):
@@ -30,6 +31,7 @@ class Service(db.Model):
     name = db.Column(db.String(160), nullable=False)
     category = db.Column(db.String(80), nullable=False, index=True)
     description = db.Column(db.String(500), default="")
+    image_url = db.Column(db.String(500), default="")
     price = db.Column(db.Numeric(10, 2), nullable=False, default=0)
     active = db.Column(db.Boolean, default=True, nullable=False, index=True)
 

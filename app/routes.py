@@ -315,6 +315,7 @@ def admin_product_add():
     category = clean_text(request.form.get("category"), 40)
     unit = clean_text(request.form.get("unit"), 40)
     description = clean_text(request.form.get("description"), 500)
+    image_url = clean_text(request.form.get("image_url"), 500)
 
     try:
         price = Decimal(request.form.get("price", "0"))
@@ -330,6 +331,7 @@ def admin_product_add():
         price=price,
         unit=unit,
         description=description,
+        image_url=image_url,
         active=True
     ))
     db.session.commit()
@@ -350,6 +352,7 @@ def admin_product_edit(product_id):
     category = clean_text(request.form.get("category"), 40)
     unit = clean_text(request.form.get("unit"), 40)
     description = clean_text(request.form.get("description"), 500)
+    image_url = clean_text(request.form.get("image_url"), 500)
 
     try:
         price = Decimal(request.form.get("price", "0"))
@@ -364,6 +367,7 @@ def admin_product_edit(product_id):
     product.unit = unit
     product.price = price
     product.description = description
+    product.image_url = image_url
 
     db.session.commit()
 

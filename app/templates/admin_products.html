@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nakuru Gaz Gang - Products & Prices</title>
+<style>
+body {
+    font-family: "Courier New", monospace;
+    margin: 0;
+    background: #f4f4f4;
+    color: #111;
+}
+header {
+    background: #111;
+    color: white;
+    padding: 20px;
+}
+main {
+    max-width: 1100px;
+    margin: 25px auto;
+    padding: 0 15px;
+}
+.card {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+}
+input, textarea, button {
+    font-family: inherit;
+    padding: 9px;
+    margin: 5px 0;
+}
+input, textarea {
+    width: 95%;
+}
+button {
+    cursor: pointer;
+}
+.product {
+    border-top: 1px solid #ccc;
+    padding: 18px 0;
+}
+.active {
+    font-weight: bold;
+}
+.inactive {
+    opacity: .55;
+}
+a {
+    color: inherit;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>NAKURU GAZ GANG — PRODUCTS & PRICES</h1>
+    <a href="/admin">← BACK TO DASHBOARD</a>
+</header>
+
+<main>
+
+<div class="card">
+    <h2>ADD PRODUCT</h2>
+
+    <form method="post" action="/admin/products/add">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <label>Product name</label><br>
+        <input name="name" required placeholder="e.g. 13KG Gas Cylinder"><br>
+
+        <label>Category</label><br>
+        <input name="category" required placeholder="Gas or Water"><br>
+
+        <label>Price (KES)</label><br>
+        <input name="price" type="number" min="0" step="0.01" required><br>
+
+        <label>Unit</label><br>
+        <input name="unit" required placeholder="cylinder, refill, container"><br>
+
+        <label>Description</label><br>
+        <textarea name="description" rows="3"></textarea><br>
+
+        <button type="submit">ADD PRODUCT</button>
+    </form>
+</div>
+
+<div class="card">
+    <h2>EXISTING PRODUCTS</h2>
+
+    {% for product in products %}
+
+    <div class="product {% if product.active %}active{% else %}inactive{% endif %}">
+
+        <form method="post" action="/admin/products/{{ product.id }}/edit">
+
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <label>Name</label><br>
+            <input name="name" value="{{ product.name }}" required><br>
+
+            <label>Category</label><br>
+            <input name="category" value="{{ product.category }}" required><br>
+
+            <label>Price (KES)</label><br>
+            <input name="price" type="number" min="0" step="0.01" value="{{ product.price }}" required><br>
+
+            <label>Unit</label><br>
+            <input name="unit" value="{{ product.unit }}" required><br>
+
+            <label>Description</label><br>
+            <textarea name="description" rows="3">{{ product.description }}</textarea><br>
+
+            <button type="submit">SAVE CHANGES</button>
+        </form>
+
+        <form method="post" action="/admin/products/{{ product.id }}/toggle">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            {% if product.active %}
+                <button type="submit">DEACTIVATE PRODUCT</button>
+                <span>ACTIVE</span>
+            {% else %}
+                <button type="submit">ACTIVATE PRODUCT</button>
+                <span>INACTIVE</span>
+            {% endif %}
+        </form>
+
+    </div>
+
+    {% else %}
+
+    <p>No products found.</p>
+
+    {% endfor %}
+</div>
+
+</main>
+</body>
+</html>

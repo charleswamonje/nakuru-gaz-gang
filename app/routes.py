@@ -296,3 +296,90 @@ def admin():
     if not session.get("admin"):
         abort(403)
     return render_template("admin_dashboard.html", stats={"orders": Order.query.count(), "service_requests": ServiceRequest.query.count(), "products": Product.query.count(), "services": Service.query.count(), "customers": User.query.filter_by(role="customer").count(), "email_public": email_public(), "payment_and_customer_care": "0710525480"})
+
+
+@main.get("/admin/products")
+def admin_products():
+    if not session.get("admin"):
+        abort(403)
+    products = Product.query.order_by(Product.id).all()
+    return render_template("admin_products.html", products=products)
+
+
+@main.post("/admin/products/add")
+def admin_product_add():
+    if not session.get("admin"):
+        abort(403)
+
+    name = clean_text(request.form.get("name"), 120)
+    category = clean_text(request.form.get("category"), 40)
+    unit = clean_text(request.form.get("unit"), 40)
+    description = clean_text(request.form.get("description"), 500)
+
+    try:
+        price = Decimal(request.form.get("price", "0"))
+    except (InvalidOperation, ValueError):
+        return "Invalid price.", 400
+
+    if not name or not category or not unit or price < 0:
+        return "Please provide valid product details.", 400
+
+    db.session.add(Product(
+        name=name,
+        category=category,
+        price=price,
+        unit=unit,
+        description=description,
+        active=True
+    ))
+    db.session.commit()
+
+    return redirect(url_for("main.admin_products"))
+
+
+@main.post("/admin/products/<int:product_id>/edit")
+def admin_product_edit(product_id):
+    if not session.get("admin"):
+        abort(403)
+
+    product = db.session.get(Product, product_id)
+    if not product:
+        abort(404)
+
+    name = clean_text(request.form.get("name"), 120)
+    category = clean_text(request.form.get("category"), 40)
+    unit = clean_text(request.form.get("unit"), 40)
+    description = clean_text(request.form.get("description"), 500)
+
+    try:
+        price = Decimal(request.form.get("price", "0"))
+    except (InvalidOperation, ValueError):
+        return "Invalid price.", 400
+
+    if not name or not category or not unit or price < 0:
+        return "Please provide valid product details.", 400
+
+    product.name = name
+    product.category = category
+    product.unit = unit
+    product.price = price
+    product.description = description
+
+    db.session.commit()
+
+    return redirect(url_for("main.admin_products"))
+
+
+@main.post("/admin/products/<int:product_id>/toggle")
+def admin_product_toggle(product_id):
+    if not session.get("admin"):
+        abort(403)
+
+    product = db.session.get(Product, product_id)
+    if not product:
+        abort(404)
+
+    product.active = not product.active
+    db.session.commit()
+
+    return redirect(url_for("main.admin_products"))

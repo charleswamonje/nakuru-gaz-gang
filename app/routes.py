@@ -383,3 +383,83 @@ def admin_product_toggle(product_id):
     db.session.commit()
 
     return redirect(url_for("main.admin_products"))
+
+
+@main.get("/admin/services")
+def admin_services():
+    if not session.get("admin"):
+        abort(403)
+    services = Service.query.order_by(Service.category, Service.id).all()
+    return render_template("admin_services.html", services=services)
+
+
+@main.post("/admin/services/add")
+def admin_service_add():
+    if not session.get("admin"):
+        abort(403)
+
+    name = clean_text(request.form.get("name"), 160)
+    category = clean_text(request.form.get("category"), 80)
+    description = clean_text(request.form.get("description"), 500)
+
+    try:
+        price = Decimal(request.form.get("price", "0"))
+    except (InvalidOperation, ValueError):
+        return "Invalid price.", 400
+
+    if not name or not category or price < 0:
+        return "Please provide valid service details.", 400
+
+    db.session.add(Service(
+        name=name,
+        category=category,
+        description=description,
+        price=price,
+        active=True
+    ))
+    db.session.commit()
+    return redirect(url_for("main.admin_services"))
+
+
+@main.post("/admin/services/<int:service_id>/edit")
+def admin_service_edit(service_id):
+    if not session.get("admin"):
+        abort(403)
+
+    service = db.session.get(Service, service_id)
+    if not service:
+        abort(404)
+
+    name = clean_text(request.form.get("name"), 160)
+    category = clean_text(request.form.get("category"), 80)
+    description = clean_text(request.form.get("description"), 500)
+
+    try:
+        price = Decimal(request.form.get("price", "0"))
+    except (InvalidOperation, ValueError):
+        return "Invalid price.", 400
+
+    if not name or not category or price < 0:
+        return "Please provide valid service details.", 400
+
+    service.name = name
+    service.category = category
+    service.description = description
+    service.price = price
+
+    db.session.commit()
+    return redirect(url_for("main.admin_services"))
+
+
+@main.post("/admin/services/<int:service_id>/toggle")
+def admin_service_toggle(service_id):
+    if not session.get("admin"):
+        abort(403)
+
+    service = db.session.get(Service, service_id)
+    if not service:
+        abort(404)
+
+    service.active = not service.active
+    db.session.commit()
+    return redirect(url_for("main.admin_services"))

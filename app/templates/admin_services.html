@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Services Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <h1>Services Management</h1>
+
+        <p>
+            <a href="{{ url_for('main.admin') }}">Back to Admin Dashboard</a>
+        </p>
+
+        <section>
+            <h2>Add Service</h2>
+
+            <form method="POST" action="{{ url_for('main.admin_service_add') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <label>
+                    Service name
+                    <input type="text" name="name" maxlength="160" required>
+                </label>
+
+                <label>
+                    Category
+                    <input type="text" name="category" maxlength="80" required>
+                </label>
+
+                <label>
+                    Price (KES)
+                    <input type="number" name="price" min="0" step="0.01" value="0" required>
+                </label>
+
+                <label>
+                    Description
+                    <textarea name="description" maxlength="500"></textarea>
+                </label>
+
+                <button type="submit">Add Service</button>
+            </form>
+        </section>
+
+        <section>
+            <h2>Existing Services</h2>
+
+            {% for service in services %}
+            <article>
+                <h3>{{ service.name }}</h3>
+
+                <form method="POST" action="{{ url_for('main.admin_service_edit', service_id=service.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <label>
+                        Service name
+                        <input type="text" name="name" maxlength="160" value="{{ service.name }}" required>
+                    </label>
+
+                    <label>
+                        Category
+                        <input type="text" name="category" maxlength="80" value="{{ service.category }}" required>
+                    </label>
+
+                    <label>
+                        Price (KES)
+                        <input type="number" name="price" min="0" step="0.01" value="{{ service.price }}" required>
+                    </label>
+
+                    <label>
+                        Description
+                        <textarea name="description" maxlength="500">{{ service.description }}</textarea>
+                    </label>
+
+                    <button type="submit">Save Changes</button>
+                </form>
+
+                <form method="POST" action="{{ url_for('main.admin_service_toggle', service_id=service.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit">
+                        {% if service.active %}Deactivate{% else %}Activate{% endif %}
+                    </button>
+                </form>
+
+                <p>
+                    Status:
+                    {% if service.active %}Active{% else %}Inactive{% endif %}
+                </p>
+            </article>
+            {% else %}
+            <p>No services found.</p>
+            {% endfor %}
+        </section>
+    </main>
+</body>
+</html>

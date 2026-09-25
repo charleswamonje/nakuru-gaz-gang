@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nakuru Gaz Gang | Payments</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<header>
+    <strong>NAKURU GAZ GANG</strong>
+    <span>ADMIN — PAYMENTS</span>
+</header>
+
+<main>
+
+    <h1>Payments Centre</h1>
+    <p>Admin-only payment records and payment verification.</p>
+
+    <section class="card">
+        <h2>Payment Records</h2>
+
+        {% if orders %}
+
+            {% for order in orders %}
+
+            <div style="border-bottom:1px solid #ccc;padding:14px 0;">
+
+                <strong>Order #{{ order.id }}</strong><br>
+
+                Customer:
+                {{ order.customer_name }}<br>
+
+                Phone:
+                {{ order.phone }}<br>
+
+                Amount:
+                KSh {{ order.total }}<br>
+
+                Payment status:
+                {{ order.payment_status }}<br>
+
+                Payment method:
+                {{ order.payment_method or "Not selected" }}<br>
+
+                Transaction / Reference:
+                {{ order.payment_reference or "Not available" }}<br>
+
+                Order status:
+                {{ order.status }}<br>
+
+                Received:
+                {{ order.created_at }}
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>No payment records available.</p>
+
+        {% endif %}
+
+    </section>
+
+    <p>
+        <a href="/admin">Back to Admin Dashboard</a>
+        |
+        <a href="/admin/orders">Orders</a>
+        |
+        <a href="/admin/sales">Sales</a>
+    </p>
+
+</main>
+
+</body>
+</html>

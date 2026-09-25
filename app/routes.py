@@ -349,6 +349,19 @@ def admin_update_order(order_id):
 
     return redirect(url_for("main.admin_orders"))
 
+@main.get("/admin/payments")
+def admin_payments():
+    if not session.get("admin"):
+        abort(403)
+
+    orders = Order.query.order_by(Order.created_at.desc()).all()
+
+    return render_template(
+        "admin_payments.html",
+        orders=orders
+    )
+
+
 @main.get("/admin/sales")
 def admin_sales():
     if not session.get("admin"):

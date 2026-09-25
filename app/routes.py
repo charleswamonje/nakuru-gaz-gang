@@ -109,8 +109,16 @@ def current_user():
 def index():
     products = Product.query.filter_by(active=True).order_by(Product.id).all()
     services = Service.query.filter_by(active=True).order_by(Service.category, Service.id).all()
-    return render_template("index.html", products=products, services=services,
-                           email_public=email_public(), user=current_user())
+    till_setting = BusinessSetting.query.filter_by(key="mpesa_till").first()
+    mpesa_till = till_setting.value if till_setting else ""
+    return render_template(
+        "index.html",
+        products=products,
+        services=services,
+        email_public=email_public(),
+        user=current_user(),
+        mpesa_till=mpesa_till
+    )
 
 
 @main.get("/auth")

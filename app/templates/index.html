@@ -559,6 +559,18 @@
 
         0710525480
 
+        {% if mpesa_till %}
+        <br><br>
+        <strong>M-PESA BUY GOODS TILL</strong>
+        <br>
+        {{ mpesa_till }}
+        <br>
+        Use this Till number when making your M-PESA payment.
+        {% else %}
+        <br><br>
+        M-PESA Till will appear here when configured by Admin.
+        {% endif %}
+
     </div>
 
 

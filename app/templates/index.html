@@ -582,7 +582,8 @@
     </button>
 
 
-    <p id="orderResult"></p>
+    <input type="hidden" id="orderId" value="">
+    <p id="orderResult"></p><div id="paymentReferenceBox" style="margin-top:15px;"> <label for="paymentReference"><strong>M-PESA PAYMENT REFERENCE</strong></label><br><input type="text" id="paymentReference" maxlength="120" placeholder="Enter your M-PESA transaction code" style="width:100%;padding:12px;margin-top:6px;"><button type="button" id="submitPaymentReference" style="margin-top:8px;">SUBMIT PAYMENT REFERENCE</button><p id="paymentReferenceResult"></p></div>
 
 </section>
 

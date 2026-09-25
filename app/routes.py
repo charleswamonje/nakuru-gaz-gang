@@ -276,6 +276,27 @@ def create_order():
     return jsonify(message="Order received.", order_id=order.id, payment_number="0710525480")
 
 
+@main.post("/api/orders/<int:order_id>/payment-reference")
+@limiter.limit("10 per minute")
+def submit_payment_reference(order_id):
+    data = request.get_json(silent=True) or {}
+    phone = clean_text(data.get("phone"), 30)
+    reference = clean_text(data.get("payment_reference"), 120)
+    if not phone or not reference:
+        return jsonify(error="Phone number and M-PESA transaction reference are required."), 400
+    order = db.session.get(Order, order_id)
+    if order is None:
+        return jsonify(error="Order not found."), 404
+    if order.phone != phone:
+        return jsonify(error="The phone number does not match this order."), 403
+    if order.payment_status == "paid":
+        return jsonify(error="This order is already marked as paid."), 400
+    order.payment_method = "mpesa"
+    order.payment_reference = reference
+    db.session.commit()
+    return jsonify(message="Payment reference received. Admin will verify the payment.", order_id=order.id)
+
+
 @main.post("/api/service-requests")
 @limiter.limit("10 per minute")
 def create_service_request():

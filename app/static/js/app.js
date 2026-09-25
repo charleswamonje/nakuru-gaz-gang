@@ -165,6 +165,16 @@
         result.textContent =
           `ORDER RECEIVED — Order #${d.order_id}. Keep this order number for your payment/reference.`;
 
+        const orderIdField = document.getElementById('orderId');
+        if(orderIdField){
+          orderIdField.value = d.order_id;
+        }
+
+        const paymentBox = document.getElementById('paymentReferenceBox');
+        if(paymentBox){
+          paymentBox.style.display = 'block';
+        }
+
         cart.length = 0;
         renderCart();
       }else{
@@ -177,6 +187,36 @@
     }catch(e){
       result.textContent =
         'Network error. Please try again.';
+    }
+  }
+
+  async function submitPaymentReference(){
+    const result = document.getElementById('paymentReferenceResult');
+    const orderId = document.getElementById('orderId')?.value;
+    const phone = document.getElementById('orderPhone')?.value;
+    const reference = document.getElementById('paymentReference')?.value;
+
+    if(!orderId){
+      result.textContent = 'Submit your order first to get an order number.';
+      return;
+    }
+
+    if(!reference){
+      result.textContent = 'Enter your M-PESA transaction reference.';
+      return;
+    }
+
+    try{
+      const r = await post(
+        `/api/orders/${orderId}/payment-reference`,
+        JSON.stringify({phone: phone, payment_reference: reference}),
+        {'Content-Type':'application/json'}
+      );
+
+      const d = await r.json();
+      result.textContent = d.error || d.message || 'Request failed.';
+    }catch(e){
+      result.textContent = 'Network error. Please try again.';
     }
   }
 
@@ -214,6 +254,10 @@
   document
     .getElementById('submitOrder')
     ?.addEventListener('click', submitOrder);
+
+  document
+    .getElementById('submitPaymentReference')
+    ?.addEventListener('click', submitPaymentReference);
 
   document
     .getElementById('submitService')

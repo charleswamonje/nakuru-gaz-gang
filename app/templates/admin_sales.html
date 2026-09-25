@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nakuru Gaz Gang | Sales</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header>
+    <strong>NAKURU GAZ GANG</strong>
+    <span>ADMIN — SALES</span>
+</header>
+
+<main>
+    <h1>Sales Centre</h1>
+    <p>Sales and payment overview for Nakuru Gaz Gang.</p>
+
+    <section class="card">
+        <h2>Sales Overview</h2>
+        <p><strong>Total orders:</strong> {{ stats.total_orders }}</p>
+        <p><strong>Paid orders:</strong> {{ stats.paid_orders }}</p>
+        <p><strong>Pending payments:</strong> {{ stats.pending_orders }}</p>
+        <p><strong>Total paid revenue:</strong> KSh {{ stats.total_revenue }}</p>
+        <p><strong>Today's orders:</strong> {{ stats.today_orders }}</p>
+        <p><strong>Today's paid sales:</strong> KSh {{ stats.today_revenue }}</p>
+    </section>
+
+    <section class="card">
+        <h2>Recent Orders</h2>
+
+        {% if orders %}
+            {% for order in orders %}
+            <div style="border-bottom:1px solid #ccc;padding:12px 0;">
+                <strong>Order #{{ order.id }}</strong><br>
+                Customer: {{ order.customer_name }}<br>
+                Total: KSh {{ order.total }}<br>
+                Order status: {{ order.status }}<br>
+                Payment: {{ order.payment_status }}<br>
+                Method: {{ order.payment_method or "Not selected" }}<br>
+                Reference: {{ order.payment_reference or "Not available" }}
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No orders recorded.</p>
+        {% endif %}
+    </section>
+
+    <p>
+        <a href="/admin">Back to Admin Dashboard</a>
+        |
+        <a href="/admin/orders">Orders</a>
+    </p>
+</main>
+
+</body>
+</html>

@@ -349,6 +349,45 @@ def admin_update_order(order_id):
 
     return redirect(url_for("main.admin_orders"))
 
+@main.get("/admin/sales")
+def admin_sales():
+    if not session.get("admin"):
+        abort(403)
+
+    orders = Order.query.order_by(Order.created_at.desc()).all()
+
+    paid_orders = [o for o in orders if o.payment_status == "paid"]
+    pending_orders = [o for o in orders if o.payment_status == "pending"]
+
+    total_revenue = sum((o.total for o in paid_orders), 0)
+
+    today = datetime.now(timezone.utc).date()
+    today_orders = [
+        o for o in orders
+        if o.created_at and o.created_at.date() == today
+    ]
+    today_paid = [
+        o for o in today_orders
+        if o.payment_status == "paid"
+    ]
+
+    today_revenue = sum((o.total for o in today_paid), 0)
+
+    stats = {
+        "total_orders": len(orders),
+        "paid_orders": len(paid_orders),
+        "pending_orders": len(pending_orders),
+        "total_revenue": total_revenue,
+        "today_orders": len(today_orders),
+        "today_revenue": today_revenue,
+    }
+
+    return render_template(
+        "admin_sales.html",
+        stats=stats,
+        orders=orders
+    )
+
 @main.get("/admin")
 def admin():
     if not session.get("admin"):

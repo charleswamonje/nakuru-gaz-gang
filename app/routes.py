@@ -276,6 +276,24 @@ def create_order():
     return jsonify(message="Order received.", order_id=order.id, payment_number="0710525480")
 
 
+@main.get("/api/orders/<int:order_id>/status")
+@limiter.limit("20 per minute")
+def order_status(order_id):
+    phone = clean_text(request.args.get("phone"), 30)
+    if not phone:
+        return jsonify(error="Phone number is required."), 400
+    order = db.session.get(Order, order_id)
+    if order is None or order.phone != phone:
+        return jsonify(error="Order not found."), 404
+    return jsonify(
+        order_id=order.id,
+        status=order.status,
+        payment_status=order.payment_status,
+        payment_method=order.payment_method,
+        created_at=order.created_at.isoformat() if order.created_at else None,
+    )
+
+
 @main.post("/api/orders/<int:order_id>/payment-reference")
 @limiter.limit("10 per minute")
 def submit_payment_reference(order_id):

@@ -362,3 +362,51 @@
     });
 
 })();
+
+const trackOrderButton = document.getElementById('trackOrder');
+
+if (trackOrderButton) {
+  trackOrderButton.addEventListener('click', async () => {
+    const orderId = document.getElementById('trackingOrderId').value.trim();
+    const phone = document.getElementById('trackingPhone').value.trim();
+    const result = document.getElementById('trackingResult');
+
+    if (!orderId || !phone) {
+      result.textContent = 'Enter your order number and phone number.';
+      return;
+    }
+
+    result.textContent = 'Checking order status...';
+
+    try {
+      const response = await fetch(
+        `/api/orders/${encodeURIComponent(orderId)}/status?phone=${encodeURIComponent(phone)}`
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        result.textContent = data.error || 'Order not found.';
+        return;
+      }
+
+      const labels = {
+        received: 'Received',
+        confirmed: 'Confirmed',
+        out_for_delivery: 'Out for delivery',
+        delivered: 'Delivered',
+        cancelled: 'Cancelled'
+      };
+
+      const status = labels[data.status] || data.status || 'Unknown';
+
+      result.innerHTML = `
+        <strong>Order #${data.order_id}</strong><br>
+        <strong>Status:</strong> ${status}<br>
+        <strong>Payment:</strong> ${data.payment_status || 'pending'}
+      `;
+    } catch (error) {
+      result.textContent = 'Unable to check the order right now.';
+    }
+  });
+}

@@ -161,14 +161,17 @@
 
       const d = await r.json();
 
-      result.textContent =
-        d.error ||
-        d.message ||
-        'Request failed.';
-
       if(r.ok){
+        result.textContent =
+          `ORDER RECEIVED — Order #${d.order_id}. Keep this order number for your payment/reference.`;
+
         cart.length = 0;
         renderCart();
+      }else{
+        result.textContent =
+          d.error ||
+          d.message ||
+          'Request failed.';
       }
 
     }catch(e){

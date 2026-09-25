@@ -312,6 +312,24 @@ def admin_logout():
     return "Logged out"
 
 
+@main.get("/admin/orders")
+def admin_orders():
+    if not session.get("admin"):
+        abort(403)
+
+    orders = Order.query.order_by(Order.created_at.desc()).all()
+    order_rows = []
+
+    for order in orders:
+        items = OrderItem.query.filter_by(order_id=order.id).all()
+        order_rows.append({
+            "order": order,
+            "items": items
+        })
+
+    return render_template("admin_orders.html", order_rows=order_rows)
+
+
 @main.get("/admin")
 def admin():
     if not session.get("admin"):

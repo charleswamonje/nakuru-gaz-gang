@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nakuru Gaz Gang | Orders</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header>
+    <strong>NAKURU GAZ GANG</strong>
+    <span>ADMIN — ORDERS</span>
+</header>
+
+<main>
+    <h1>Customer Orders</h1>
+    <p>Orders received through the Nakuru Gaz Gang website.</p>
+
+    {% if order_rows %}
+        {% for row in order_rows %}
+        <section class="card" style="margin-bottom:20px;">
+            <h2>Order #{{ row.order.id }}</h2>
+
+            <p><strong>Customer:</strong> {{ row.order.customer_name }}</p>
+            <p><strong>Phone:</strong> {{ row.order.phone }}</p>
+            <p><strong>Delivery area:</strong> {{ row.order.delivery_area }}</p>
+            <p><strong>Notes:</strong> {{ row.order.notes or "None" }}</p>
+            <p><strong>Total:</strong> KSh {{ row.order.total }}</p>
+            <p><strong>Status:</strong> {{ row.order.status }}</p>
+            <p><strong>Received:</strong> {{ row.order.created_at }}</p>
+
+            <h3>Items</h3>
+
+            {% if row.items %}
+                <ul>
+                {% for item in row['items'] %}
+                    <li>
+                        Product ID {{ item.product_id }}
+                        — Quantity: {{ item.quantity }}
+                        — Unit price: KSh {{ item.unit_price }}
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>No order items recorded.</p>
+            {% endif %}
+        </section>
+        {% endfor %}
+    {% else %}
+        <p>No orders have been received.</p>
+    {% endif %}
+
+    <p><a href="/admin">Back to Admin Dashboard</a></p>
+</main>
+
+</body>
+</html>

@@ -66,7 +66,7 @@ a {
 <div class="card">
     <h2>ADD PRODUCT</h2>
 
-    <form method="post" action="/admin/products/add">
+    <form method="post" action="/admin/products/add" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
         <label>Product name</label><br>
@@ -86,6 +86,9 @@ a {
 
         <label>Image URL</label><br>
         <input name="image_url" placeholder="https://example.com/product-image.jpg"><br>
+
+        <label>Upload Product Photo</label><br>
+        <input name="image" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"><br>
 
         <button type="submit">ADD PRODUCT</button>
     </form>

@@ -31,6 +31,7 @@ def database_url():
 
 def create_app():
     app = Flask(__name__)
+    app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
     production = os.getenv("FLASK_ENV", "production").lower() == "production"
 
     secret = os.getenv("SECRET_KEY")
@@ -66,7 +67,7 @@ def create_app():
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
         PERMANENT_SESSION_LIFETIME=timedelta(hours=12),
-        MAX_CONTENT_LENGTH=1 * 1024 * 1024,
+        MAX_CONTENT_LENGTH=5 * 1024 * 1024,
     )
 
     if production and not app.config["ADMIN_PASSWORD"]:

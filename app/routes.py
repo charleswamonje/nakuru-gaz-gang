@@ -2,16 +2,37 @@ from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal, InvalidOperation
 import hashlib
 import secrets
+from pathlib import Path
 import smtplib
 from email.message import EmailMessage
 
-from flask import Blueprint, current_app, jsonify, render_template, request, session, abort, redirect, url_for
+from flask import Blueprint, current_app, jsonify, render_template, request, session, abort, redirect, url_for, send_from_directory
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 
 from . import db, limiter, csrf
 from .models import User, Product, Service, Order, OrderItem, ServiceRequest
 
 main = Blueprint("main", __name__)
+
+ALLOWED_IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
+
+
+def save_product_image(upload):
+    if not upload or not upload.filename:
+        return ""
+    original = secure_filename(upload.filename)
+    if "." not in original:
+        return ""
+    ext = original.rsplit(".", 1)[1].lower()
+    if ext not in ALLOWED_IMAGE_EXTENSIONS:
+        return ""
+    upload_dir = Path(current_app.root_path) / "static" / "uploads" / "products"
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    filename = f"{secrets.token_hex(12)}.{ext}"
+    upload.save(upload_dir / filename)
+    return url_for("static", filename=f"uploads/products/{filename}")
+
 
 
 def email_public():
@@ -316,6 +337,9 @@ def admin_product_add():
     unit = clean_text(request.form.get("unit"), 40)
     description = clean_text(request.form.get("description"), 500)
     image_url = clean_text(request.form.get("image_url"), 500)
+    uploaded_image = save_product_image(request.files.get("image"))
+    if uploaded_image:
+        image_url = uploaded_image
 
     try:
         price = Decimal(request.form.get("price", "0"))
@@ -353,6 +377,9 @@ def admin_product_edit(product_id):
     unit = clean_text(request.form.get("unit"), 40)
     description = clean_text(request.form.get("description"), 500)
     image_url = clean_text(request.form.get("image_url"), 500)
+    uploaded_image = save_product_image(request.files.get("image"))
+    if uploaded_image:
+        image_url = uploaded_image
 
     try:
         price = Decimal(request.form.get("price", "0"))

@@ -98,7 +98,7 @@ a {
 
     <div class="product {% if product.active %}active{% else %}inactive{% endif %}">
 
-        <form method="post" action="/admin/products/{{ product.id }}/edit">
+        <form method="post" action="/admin/products/{{ product.id }}/edit" enctype="multipart/form-data">
 
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
@@ -119,6 +119,9 @@ a {
 
             <label>Image URL</label><br>
             <input name="image_url" value="{{ product.image_url or '' }}" placeholder="https://example.com/product-image.jpg"><br>
+            {% if product.image_url %}<br><img src="{{ product.image_url }}" alt="{{ product.name }}" style="width:260px;height:200px;object-fit:contain;background:#f5f5f5;border-radius:8px;margin:10px 0;display:block;">{% endif %}
+<label>Upload Product Photo</label><br>
+            <input name="image" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"><br>
 
             <button type="submit">SAVE CHANGES</button>
         </form>

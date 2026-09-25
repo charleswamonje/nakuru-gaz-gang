@@ -27,7 +27,10 @@
             <p><strong>Delivery area:</strong> {{ row.order.delivery_area }}</p>
             <p><strong>Notes:</strong> {{ row.order.notes or "None" }}</p>
             <p><strong>Total:</strong> KSh {{ row.order.total }}</p>
-            <p><strong>Status:</strong> {{ row.order.status }}</p>
+            <p><strong>Order status:</strong> {{ row.order.status }}</p>
+            <p><strong>Payment status:</strong> {{ row.order.payment_status }}</p>
+            <p><strong>Payment method:</strong> {{ row.order.payment_method or "Not selected" }}</p>
+            <p><strong>Payment reference:</strong> {{ row.order.payment_reference or "Not available" }}</p>
             <p><strong>Received:</strong> {{ row.order.created_at }}</p>
 
             <h3>Items</h3>

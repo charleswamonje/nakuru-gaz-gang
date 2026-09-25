@@ -44,6 +44,9 @@ class Order(db.Model):
     notes = db.Column(db.String(1000), default="")
     total = db.Column(db.Numeric(10, 2), nullable=False, default=0)
     status = db.Column(db.String(40), default="received", nullable=False, index=True)
+    payment_status = db.Column(db.String(40), default="pending", nullable=False, index=True)
+    payment_method = db.Column(db.String(40), default="", nullable=False)
+    payment_reference = db.Column(db.String(120), default="", nullable=False, index=True)
     created_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), index=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True, index=True)
 

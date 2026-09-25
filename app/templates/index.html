@@ -1,22 +1,768 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<title>Nakuru Gaz Gang</title>
+
+<title>Nakuru Gaz Gang | Water, Gas & Technology Services</title>
+
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
-<header><div class="brand">🦩🔥 <strong>Nakuru Gaz Gang</strong></div><div class="tagline">Reliable on time clean and strong.</div><a class="phone" href="tel:0710525480">📞 0710525480</a></header>
+
+<header>
+    <div class="brand">
+        <strong>NAKURU GAZ GANG</strong>
+    </div>
+
+    <div class="tagline">
+        RELIABLE ON TIME CLEAN AND STRONG.
+    </div>
+
+    <a class="phone" href="tel:0710525480">
+        0710525480
+    </a>
+</header>
+
+
 <main>
-<section class="hero"><h1>Water, Gas & Local Technical Services</h1><p>Serving Nakuru with delivery and practical technology support.</p></section>
-<section class="values"><div><h2>Our Vision</h2><p>Reliable on time clean and strong.</p></div><div><h2>Our Mission</h2><p>To provide dependable water, gas delivery and authorized technical support to customers in Nakuru.</p></div></section>
-<section><h2>Products</h2><div id="products" class="grid">
-{% for p in products %}<article class="card">{% if p.image_url %}<img class="product-image" src="{{ p.image_url }}" alt="{{ p.name }}">{% endif %}<h3>{{ p.name }}</h3><p>{{ p.description }}</p><p><strong>{% if p.price %}KSh {{ "%.2f"|format(p.price) }}{% else %}Price confirmed before service{% endif %}</strong> / {{ p.unit }}</p><button type="button" class="add-product" data-id="{{ p.id }}" data-name="{{ p.name }}" data-price="{{ p.price or 0 }}" data-unit="{{ p.unit }}">Add to order</button></article>{% endfor %}
-</div></section>
-<section><h2>Services</h2><div class="grid">{% for category in ["Technology & Network Services","Delivery Services"] %}<div class="card"><h3>{{ category }}</h3><ul>{% for s in services if s.category == category %}<li><button type="button" class="linkbutton choose-service" data-id="{{ s.id }}">{{ s.name }}</button></li>{% endfor %}</ul></div>{% endfor %}</div></section>
-<section class="panel"><h2>Place an Order</h2><div id="cart">Your cart is empty.</div><input id="orderName" placeholder="Your name"><input id="orderPhone" placeholder="Phone number"><input id="orderArea" placeholder="Delivery area in Nakuru"><textarea id="orderNotes" placeholder="Notes"></textarea><p><strong>Payment:</strong> 0710525480</p><button type="button" id="submitOrder">Submit Order</button><p id="orderResult"></p></section>
-<section class="panel"><h2>Request a Service</h2><select id="serviceSelect"><option value="">Choose a service</option>{% for s in services %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}</select><input id="serviceName" placeholder="Your name"><input id="servicePhone" placeholder="Phone number"><input id="serviceArea" placeholder="Area"><textarea id="serviceDescription" placeholder="Describe what you need"></textarea><button type="button" id="submitService">Request Service</button><p id="serviceResult"></p></section>
-<section class="contact"><h2>Contact</h2><p>📞 <a href="tel:0710525480">0710525480</a> — customer care & payment</p>{% if email_public %}<p>📧 <a href="mailto:redgroup@gmail.com">redgroup@gmail.com</a></p>{% else %}<p>📧 Customer-care email is available to eligible customers/authorized parties during the initial operating period.</p>{% endif %}</section>
-</main><footer>Nakuru Gaz Gang • Nakuru, Kenya</footer><script src="{{ url_for('static', filename='js/app.js') }}"></script>
-</body></html>
+
+<!-- ================= HERO ================= -->
+
+<section class="hero">
+
+    <p class="eyebrow">NAKURU • KENYA • LOCAL SERVICE NETWORK</p>
+
+    <h1>
+        WATER. GAS.
+        <br>
+        TECHNOLOGY.
+        <br>
+        DELIVERED.
+    </h1>
+
+    <p class="hero-text">
+        Reliable drinking-water delivery, gas delivery and refills,
+        plus practical technology and network support for homes and
+        small businesses across Nakuru.
+    </p>
+
+    <div class="hero-actions">
+        <a class="linkbutton" href="#products">
+            ORDER WATER & GAS
+        </a>
+
+        <a class="linkbutton" href="#services">
+            EXPLORE SERVICES
+        </a>
+    </div>
+
+    <div class="hero-status">
+        <span>●</span> LOCAL DELIVERY
+        <span>●</span> TECH SUPPORT
+        <span>●</span> CUSTOMER CARE
+    </div>
+
+</section>
+
+
+<!-- ================= CORE SERVICES ================= -->
+
+<section class="panel">
+
+    <p class="eyebrow">WHAT WE DO</p>
+
+    <h2>Essential services. One local network.</h2>
+
+    <div class="grid">
+
+        <article class="card feature-card">
+
+            <div class="feature-number">01</div>
+
+            <h3>DRINKING WATER</h3>
+
+            <p>
+                Clean drinking water delivered to your home,
+                workplace or other location in Nakuru.
+            </p>
+
+            <a class="linkbutton" href="#products">
+                VIEW WATER
+            </a>
+
+        </article>
+
+
+        <article class="card feature-card">
+
+            <div class="feature-number">02</div>
+
+            <h3>GAS DELIVERY</h3>
+
+            <p>
+                Gas cylinder delivery and refill services,
+                with pricing confirmed where necessary.
+            </p>
+
+            <a class="linkbutton" href="#products">
+                VIEW GAS
+            </a>
+
+        </article>
+
+
+        <article class="card feature-card">
+
+            <div class="feature-number">03</div>
+
+            <h3>TECHNOLOGY</h3>
+
+            <p>
+                Network, computer, Wi-Fi, security and
+                small-business technology support.
+            </p>
+
+            <a class="linkbutton" href="#services">
+                GET TECH SUPPORT
+            </a>
+
+        </article>
+
+    </div>
+
+</section>
+
+
+<!-- ================= VISION ================= -->
+
+<section class="values">
+
+    <div>
+
+        <p class="eyebrow">OUR STANDARD</p>
+
+        <h2>Reliable on time clean and strong.</h2>
+
+        <p>
+            This is more than a slogan. It is the standard we aim
+            to bring to every delivery, service request and customer
+            interaction.
+        </p>
+
+    </div>
+
+
+    <div>
+
+        <p class="eyebrow">OUR MISSION</p>
+
+        <h2>Dependable local service.</h2>
+
+        <p>
+            To provide dependable water, gas delivery and authorized
+            technical support to customers in Nakuru.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ================= HOW IT WORKS ================= -->
+
+<section class="panel">
+
+    <p class="eyebrow">SIMPLE PROCESS</p>
+
+    <h2>How ordering works</h2>
+
+    <div class="grid">
+
+        <article class="card">
+
+            <div class="feature-number">01</div>
+
+            <h3>CHOOSE</h3>
+
+            <p>
+                Select the water or gas product you need.
+            </p>
+
+        </article>
+
+
+        <article class="card">
+
+            <div class="feature-number">02</div>
+
+            <h3>ORDER</h3>
+
+            <p>
+                Add your items to the order and provide your
+                name, phone number and delivery area.
+            </p>
+
+        </article>
+
+
+        <article class="card">
+
+            <div class="feature-number">03</div>
+
+            <h3>CONFIRM</h3>
+
+            <p>
+                We receive your request and contact you
+                regarding delivery and payment details.
+            </p>
+
+        </article>
+
+    </div>
+
+</section>
+
+
+<!-- ================= PRODUCTS ================= -->
+
+<section id="products">
+
+    <p class="eyebrow">LIVE PRODUCT CATALOGUE</p>
+
+    <h2>Water & Gas</h2>
+
+    <p class="section-intro">
+        Choose what you need and add it directly to your order.
+        Products, prices and availability can be managed through
+        the administration system.
+    </p>
+
+
+    <div id="products" class="grid">
+
+        {% for p in products %}
+
+        <article class="card product-card">
+
+            {% if p.image_url %}
+
+            <div class="product-image-wrap">
+
+                <img
+                    class="product-image"
+                    src="{{ p.image_url }}"
+                    alt="{{ p.name }}"
+                    loading="lazy"
+                >
+
+            </div>
+
+            {% endif %}
+
+
+            <div class="product-category">
+                {{ p.category }}
+            </div>
+
+
+            <h3>{{ p.name }}</h3>
+
+
+            <p>
+                {{ p.description }}
+            </p>
+
+
+            <div class="product-price">
+
+                {% if p.price %}
+
+                    KSh {{ "%.2f"|format(p.price) }}
+
+                {% else %}
+
+                    Price confirmed before service
+
+                {% endif %}
+
+            </div>
+
+
+            <p class="product-unit">
+                / {{ p.unit }}
+            </p>
+
+
+            <button
+                type="button"
+                class="add-product"
+                data-id="{{ p.id }}"
+                data-name="{{ p.name }}"
+                data-price="{{ p.price or 0 }}"
+                data-unit="{{ p.unit }}"
+            >
+                ADD TO ORDER
+            </button>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- ================= REPEAT DELIVERY ================= -->
+
+<section class="panel">
+
+    <p class="eyebrow">PLAN AHEAD</p>
+
+    <h2>Never wait until you run out.</h2>
+
+    <p>
+        Regular homes, offices and businesses can request
+        scheduled or repeat deliveries for water and gas.
+    </p>
+
+    <div class="grid">
+
+        <div class="card">
+
+            <h3>REPEAT WATER</h3>
+
+            <p>
+                Arrange recurring drinking-water deliveries
+                according to your needs.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>REPEAT GAS</h3>
+
+            <p>
+                Plan your next gas refill before the cylinder
+                becomes an emergency.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>BUSINESS SUPPLY</h3>
+
+            <p>
+                Discuss recurring requirements for shops,
+                offices and other small businesses.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= SERVICES ================= -->
+
+<section id="services">
+
+    <p class="eyebrow">TECHNOLOGY & DELIVERY</p>
+
+    <h2>More than delivery.</h2>
+
+    <p class="section-intro">
+        Our service network also provides practical technology
+        support for homes and small businesses.
+    </p>
+
+
+    <div class="grid">
+
+        {% for category in [
+            "Technology & Network Services",
+            "Delivery Services"
+        ] %}
+
+        <div class="card service-card">
+
+            <div class="feature-number">
+                {% if category == "Technology & Network Services" %}
+                    04
+                {% else %}
+                    05
+                {% endif %}
+            </div>
+
+
+            <h3>{{ category }}</h3>
+
+
+            <ul>
+
+                {% for s in services if s.category == category %}
+
+                <li>
+                    <button
+                        type="button"
+                        class="linkbutton choose-service"
+                        data-id="{{ s.id }}"
+                    >
+                        {{ s.name }}
+                    </button>
+                </li>
+
+                {% endfor %}
+
+            </ul>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- ================= TRUST / SECURITY ================= -->
+
+<section class="panel">
+
+    <p class="eyebrow">TRUST & SECURITY</p>
+
+    <h2>Built for reliable service.</h2>
+
+    <div class="grid">
+
+        <article class="card">
+
+            <h3>SECURE ORDERS</h3>
+
+            <p>
+                Customer requests are processed through the
+                website's protected backend.
+            </p>
+
+        </article>
+
+
+        <article class="card">
+
+            <h3>CUSTOMER-FIRST</h3>
+
+            <p>
+                We collect the information needed to process
+                your request and coordinate delivery or service.
+            </p>
+
+        </article>
+
+
+        <article class="card">
+
+            <h3>LOCAL SUPPORT</h3>
+
+            <p>
+                Direct customer care is available through
+                0710525480.
+            </p>
+
+        </article>
+
+    </div>
+
+</section>
+
+
+<!-- ================= FUTURE AI ================= -->
+
+<section class="panel future-panel">
+
+    <p class="eyebrow">NEXT GENERATION SERVICE</p>
+
+    <h2>AI customer-service system</h2>
+
+    <p>
+        A future intelligent service layer is planned to help
+        customers navigate technology troubleshooting and
+        selected digital services more efficiently.
+    </p>
+
+    <div class="future-status">
+        FUTURE SYSTEM — DEVELOPMENT ROADMAP
+    </div>
+
+    <p>
+        The system will be introduced only after development,
+        testing and security verification are complete.
+    </p>
+
+</section>
+
+
+<!-- ================= ORDER ================= -->
+
+<section class="panel order-panel" id="order">
+
+    <p class="eyebrow">ORDER NOW</p>
+
+    <h2>Your order</h2>
+
+    <div id="cart">
+        Your cart is empty.
+    </div>
+
+
+    <div class="order-form">
+
+        <input
+            id="orderName"
+            placeholder="Your name"
+            autocomplete="name"
+        >
+
+        <input
+            id="orderPhone"
+            placeholder="Phone number"
+            autocomplete="tel"
+        >
+
+        <input
+            id="orderArea"
+            placeholder="Delivery area in Nakuru"
+            autocomplete="street-address"
+        >
+
+        <textarea
+            id="orderNotes"
+            placeholder="Delivery notes or special instructions"
+        ></textarea>
+
+    </div>
+
+
+    <div class="payment-box">
+
+        <strong>PAYMENT / CUSTOMER CARE</strong>
+
+        <br>
+
+        0710525480
+
+    </div>
+
+
+    <button
+        type="button"
+        id="submitOrder"
+    >
+        SUBMIT ORDER
+    </button>
+
+
+    <p id="orderResult"></p>
+
+</section>
+
+
+<!-- ================= SERVICE REQUEST ================= -->
+
+<section class="panel" id="service-request">
+
+    <p class="eyebrow">TECHNICAL SUPPORT</p>
+
+    <h2>Request a service</h2>
+
+    <p>
+        Select the service you need and tell us what is happening.
+    </p>
+
+
+    <select id="serviceSelect">
+
+        <option value="">
+            Choose a service
+        </option>
+
+        {% for s in services %}
+
+        <option value="{{ s.id }}">
+            {{ s.name }}
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+
+    <input
+        id="serviceName"
+        placeholder="Your name"
+        autocomplete="name"
+    >
+
+
+    <input
+        id="servicePhone"
+        placeholder="Phone number"
+        autocomplete="tel"
+    >
+
+
+    <input
+        id="serviceArea"
+        placeholder="Area"
+    >
+
+
+    <textarea
+        id="serviceDescription"
+        placeholder="Describe what you need"
+    ></textarea>
+
+
+    <button
+        type="button"
+        id="submitService"
+    >
+        REQUEST SERVICE
+    </button>
+
+
+    <p id="serviceResult"></p>
+
+</section>
+
+
+<!-- ================= PHONE / WHATSAPP ================= -->
+
+<section class="contact">
+
+    <p class="eyebrow">DIRECT CUSTOMER CARE</p>
+
+    <h2>Need it now?</h2>
+
+    <p>
+        Call or send a WhatsApp message to place an enquiry
+        or discuss your delivery.
+    </p>
+
+
+    <div class="hero-actions">
+
+        <a
+            class="linkbutton"
+            href="tel:0710525480"
+        >
+            CALL 0710525480
+        </a>
+
+
+        <a
+            class="linkbutton"
+            href="https://wa.me/254710525480"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            WHATSAPP US
+        </a>
+
+    </div>
+
+
+    <p>
+        Payment and customer care:
+        <strong>0710525480</strong>
+    </p>
+
+
+    {% if email_public %}
+
+    <p>
+        Customer email:
+        <a href="mailto:redgroup@gmail.com">
+            redgroup@gmail.com
+        </a>
+    </p>
+
+    {% else %}
+
+    <p>
+        Customer-care email is available to eligible
+        customers/authorized parties during the initial
+        operating period.
+    </p>
+
+    {% endif %}
+
+</section>
+
+
+<!-- ================= FINAL CTA ================= -->
+
+<section class="hero final-cta">
+
+    <p class="eyebrow">NAKURU GAZ GANG</p>
+
+    <h2>
+        Reliable service starts with one request.
+    </h2>
+
+    <p>
+        Water. Gas. Technology support.
+        One local service network.
+    </p>
+
+    <div class="hero-actions">
+
+        <a
+            class="linkbutton"
+            href="#products"
+        >
+            START AN ORDER
+        </a>
+
+
+        <a
+            class="linkbutton"
+            href="#service-request"
+        >
+            REQUEST TECH SUPPORT
+        </a>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<footer>
+
+    <strong>NAKURU GAZ GANG</strong>
+
+    <br>
+
+    Nakuru, Kenya
+
+    <br>
+
+    Reliable on time clean and strong.
+
+</footer>
+
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+</body>
+</html>

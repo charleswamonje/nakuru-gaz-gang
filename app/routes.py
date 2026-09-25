@@ -349,6 +349,7 @@ def admin_orders():
         abort(403)
 
     orders = Order.query.order_by(Order.created_at.desc()).all()
+    pending_orders = [o for o in orders if o.payment_status == "pending" and o.payment_reference]
     order_rows = []
 
     for order in orders:
@@ -438,6 +439,7 @@ def admin_payments():
         abort(403)
 
     orders = Order.query.order_by(Order.created_at.desc()).all()
+    pending_orders = [o for o in orders if o.payment_status == "pending" and o.payment_reference]
 
     till_setting = BusinessSetting.query.filter_by(
         key="mpesa_till"
@@ -446,6 +448,7 @@ def admin_payments():
     return render_template(
         "admin_payments.html",
         orders=orders,
+        pending_orders=pending_orders,
         mpesa_till=till_setting.value if till_setting else ""
     )
 
@@ -456,6 +459,7 @@ def admin_sales():
         abort(403)
 
     orders = Order.query.order_by(Order.created_at.desc()).all()
+    pending_orders = [o for o in orders if o.payment_status == "pending" and o.payment_reference]
 
     paid_orders = [o for o in orders if o.payment_status == "paid"]
     pending_orders = [o for o in orders if o.payment_status == "pending"]

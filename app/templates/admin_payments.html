@@ -78,6 +78,32 @@
     </section>
 
     <section class="card">
+        <h2>Pending Payment Verification</h2>
+        {% if pending_orders %}
+            <p>These customers have submitted payment references and are waiting for verification.</p>
+            {% for order in pending_orders %}
+                <div class="payment-card payment-pending">
+                    <h3>Order #{{ order.id }}</h3>
+                    <p><strong>Customer:</strong> {{ order.customer_name }}</p>
+                    <p><strong>Phone:</strong> {{ order.phone }}</p>
+                    <p><strong>Amount:</strong> KSh {{ order.total }}</p>
+                    <p><strong>M-PESA Reference:</strong></p>
+                    <div class="reference">{{ order.payment_reference }}</div>
+                    <form method="post" action="{{ url_for("main.admin_update_order", order_id=order.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="payment_status" value="paid">
+                        <input type="hidden" name="payment_method" value="mpesa">
+                        <input type="hidden" name="payment_reference" value="{{ order.payment_reference }}">
+                        <button type="submit">VERIFY &amp; MARK PAID</button>
+                    </form>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No payments are waiting for verification.</p>
+        {% endif %}
+    </section>
+
+    <section class="card">
         <h2>Payment Records</h2>
 
         {% if orders %}

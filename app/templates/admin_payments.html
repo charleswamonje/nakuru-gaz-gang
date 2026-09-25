@@ -5,6 +5,42 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Nakuru Gaz Gang | Payments</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+.payment-card {
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 18px;
+}
+.payment-pending {
+    border-color: #d69e00;
+}
+.payment-paid {
+    border-color: #168a45;
+}
+.payment-refunded,
+.payment-failed {
+    border-color: #999;
+}
+.reference {
+    font-size: 1.15rem;
+    font-weight: bold;
+    letter-spacing: .5px;
+    padding: 10px;
+    background: #f4f4f4;
+    border-radius: 6px;
+    word-break: break-word;
+}
+.verify-form {
+    display: inline-block;
+    margin-top: 10px;
+    margin-right: 8px;
+}
+.verify-form button {
+    padding: 10px 14px;
+    cursor: pointer;
+}
+</style>
 </head>
 
 <body>
@@ -17,7 +53,7 @@
 <main>
 
     <h1>Payments Centre</h1>
-    <p>Admin-only payment records and payment verification.</p>
+    <p>Review customer payment references and verify payments.</p>
 
     <section class="card">
         <h2>M-PESA Buy Goods Till</h2>
@@ -34,8 +70,7 @@
                 inputmode="numeric"
                 maxlength="20"
                 value="{{ mpesa_till or '' }}"
-                placeholder="Enter M-PESA Buy Goods Till"
-                style="background:#168a45;color:white;padding:12px;border:2px solid #0b5d2a;border-radius:6px;"
+                placeholder="Enter M-PESA Buy Goods Till when available"
             >
 
             <button type="submit">SAVE TILL NUMBER</button>
@@ -49,7 +84,12 @@
 
             {% for order in orders %}
 
-                <article class="card">
+                <article class="payment-card
+                    {% if order.payment_status == 'pending' %}payment-pending
+                    {% elif order.payment_status == 'paid' %}payment-paid
+                    {% elif order.payment_status == 'refunded' %}payment-refunded
+                    {% elif order.payment_status == 'failed' %}payment-failed
+                    {% endif %}">
 
                     <h3>Order #{{ order.id }}</h3>
 
@@ -69,22 +109,93 @@
                     </p>
 
                     <p>
-                        <strong>Payment Status:</strong>
+                        <strong>Payment status:</strong>
                         {{ order.payment_status }}
                     </p>
 
                     <p>
-                        <strong>Payment Method:</strong>
+                        <strong>Payment method:</strong>
                         {{ order.payment_method or "Not selected" }}
                     </p>
 
-                    <p>
-                        <strong>Transaction / Reference:</strong>
-                        {{ order.payment_reference or "Not provided" }}
-                    </p>
+                    <p><strong>M-PESA Transaction Reference:</strong></p>
+
+                    <div class="reference">
+                        {{ order.payment_reference or "NOT PROVIDED" }}
+                    </div>
+
+                    {% if order.payment_status == "pending" and order.payment_reference %}
+
+                        <form class="verify-form"
+                              method="post"
+                              action="{{ url_for('main.admin_update_order', order_id=order.id) }}">
+
+                            <input type="hidden"
+                                   name="csrf_token"
+                                   value="{{ csrf_token() }}">
+
+                            <input type="hidden"
+                                   name="payment_status"
+                                   value="paid">
+
+                            <input type="hidden"
+                                   name="payment_method"
+                                   value="mpesa">
+
+                            <input type="hidden"
+                                   name="payment_reference"
+                                   value="{{ order.payment_reference }}">
+
+                            <button type="submit">
+                                VERIFY &amp; MARK PAID
+                            </button>
+                        </form>
+
+                    {% elif order.payment_status == "paid" %}
+
+                        <strong>PAYMENT VERIFIED</strong>
+
+                    {% elif order.payment_status == "refunded" %}
+
+                        <strong>REFUNDED</strong>
+
+                    {% elif order.payment_status == "failed" %}
+
+                        <strong>PAYMENT FAILED</strong>
+
+                    {% endif %}
+
+                    {% if order.payment_status != "refunded" %}
+
+                        <form class="verify-form"
+                              method="post"
+                              action="{{ url_for('main.admin_update_order', order_id=order.id) }}">
+
+                            <input type="hidden"
+                                   name="csrf_token"
+                                   value="{{ csrf_token() }}">
+
+                            <input type="hidden"
+                                   name="payment_status"
+                                   value="refunded">
+
+                            <input type="hidden"
+                                   name="payment_method"
+                                   value="{{ order.payment_method or 'mpesa' }}">
+
+                            <input type="hidden"
+                                   name="payment_reference"
+                                   value="{{ order.payment_reference or '' }}">
+
+                            <button type="submit">
+                                MARK REFUNDED
+                            </button>
+                        </form>
+
+                    {% endif %}
 
                     <p>
-                        <strong>Order Status:</strong>
+                        <strong>Order status:</strong>
                         {{ order.status }}
                     </p>
 
@@ -113,6 +224,5 @@
     </p>
 
 </main>
-
 </body>
 </html>

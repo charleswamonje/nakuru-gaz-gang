@@ -330,6 +330,25 @@ def admin_orders():
     return render_template("admin_orders.html", order_rows=order_rows)
 
 
+@main.post("/admin/orders/<int:order_id>/update")
+def admin_update_order(order_id):
+    if not session.get("admin"):
+        abort(403)
+
+    order = db.session.get(Order, order_id)
+
+    if order is None:
+        abort(404)
+
+    order.status = request.form.get("status", order.status)
+    order.payment_status = request.form.get("payment_status", order.payment_status)
+    order.payment_method = request.form.get("payment_method", order.payment_method)
+    order.payment_reference = request.form.get("payment_reference", order.payment_reference)
+
+    db.session.commit()
+
+    return redirect(url_for("main.admin_orders"))
+
 @main.get("/admin")
 def admin():
     if not session.get("admin"):

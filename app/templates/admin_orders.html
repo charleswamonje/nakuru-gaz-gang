@@ -33,6 +33,61 @@
             <p><strong>Payment reference:</strong> {{ row.order.payment_reference or "Not available" }}</p>
             <p><strong>Received:</strong> {{ row.order.created_at }}</p>
 
+            <h3>Admin Controls</h3>
+            <form method="post" action="{{ url_for('main.admin_update_order', order_id=row.order.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <label for="status-{{ row.order.id }}">Order status</label>
+                <select id="status-{{ row.order.id }}" name="status">
+                    {% for value, label in [
+                        ("received", "Received"),
+                        ("confirmed", "Confirmed"),
+                        ("processing", "Processing"),
+                        ("out_for_delivery", "Out for Delivery"),
+                        ("delivered", "Delivered"),
+                        ("cancelled", "Cancelled")
+                    ] %}
+                        <option value="{{ value }}" {% if row.order.status == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <label for="payment-status-{{ row.order.id }}">Payment status</label>
+                <select id="payment-status-{{ row.order.id }}" name="payment_status">
+                    {% for value, label in [
+                        ("pending", "Pending"),
+                        ("paid", "Paid"),
+                        ("failed", "Failed"),
+                        ("refunded", "Refunded")
+                    ] %}
+                        <option value="{{ value }}" {% if row.order.payment_status == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <label for="payment-method-{{ row.order.id }}">Payment method</label>
+                <select id="payment-method-{{ row.order.id }}" name="payment_method">
+                    <option value="" {% if not row.order.payment_method %}selected{% endif %}>Not selected</option>
+                    <option value="mpesa" {% if row.order.payment_method == "mpesa" %}selected{% endif %}>M-PESA</option>
+                    <option value="paypal" {% if row.order.payment_method == "paypal" %}selected{% endif %}>PayPal</option>
+                    <option value="cash" {% if row.order.payment_method == "cash" %}selected{% endif %}>Cash</option>
+                </select>
+
+                <label for="payment-reference-{{ row.order.id }}">Payment reference</label>
+                <input
+                    id="payment-reference-{{ row.order.id }}"
+                    type="text"
+                    name="payment_reference"
+                    value="{{ row.order.payment_reference or '' }}"
+                    maxlength="120"
+                    placeholder="Transaction/reference number"
+                >
+
+                <button type="submit">SAVE ORDER CHANGES</button>
+            </form>
+
             <h3>Items</h3>
 
             {% if row.items %}

@@ -20,50 +20,88 @@
     <p>Admin-only payment records and payment verification.</p>
 
     <section class="card">
+        <h2>M-PESA Buy Goods Till</h2>
+
+        <form method="post" action="/admin/payments/settings">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <label for="mpesa-till">Business Till Number</label>
+
+            <input
+                id="mpesa-till"
+                name="mpesa_till"
+                type="text"
+                inputmode="numeric"
+                maxlength="20"
+                value="{{ mpesa_till or '' }}"
+                placeholder="Enter M-PESA Buy Goods Till"
+                style="background:#168a45;color:white;padding:12px;border:2px solid #0b5d2a;border-radius:6px;"
+            >
+
+            <button type="submit">SAVE TILL NUMBER</button>
+        </form>
+    </section>
+
+    <section class="card">
         <h2>Payment Records</h2>
 
         {% if orders %}
 
             {% for order in orders %}
 
-            <div style="border-bottom:1px solid #ccc;padding:14px 0;">
+                <article class="card">
 
-                <strong>Order #{{ order.id }}</strong><br>
+                    <h3>Order #{{ order.id }}</h3>
 
-                Customer:
-                {{ order.customer_name }}<br>
+                    <p>
+                        <strong>Customer:</strong>
+                        {{ order.customer_name }}
+                    </p>
 
-                Phone:
-                {{ order.phone }}<br>
+                    <p>
+                        <strong>Phone:</strong>
+                        {{ order.phone }}
+                    </p>
 
-                Amount:
-                KSh {{ order.total }}<br>
+                    <p>
+                        <strong>Amount:</strong>
+                        KSh {{ order.total }}
+                    </p>
 
-                Payment status:
-                {{ order.payment_status }}<br>
+                    <p>
+                        <strong>Payment Status:</strong>
+                        {{ order.payment_status }}
+                    </p>
 
-                Payment method:
-                {{ order.payment_method or "Not selected" }}<br>
+                    <p>
+                        <strong>Payment Method:</strong>
+                        {{ order.payment_method or "Not selected" }}
+                    </p>
 
-                Transaction / Reference:
-                {{ order.payment_reference or "Not available" }}<br>
+                    <p>
+                        <strong>Transaction / Reference:</strong>
+                        {{ order.payment_reference or "Not provided" }}
+                    </p>
 
-                Order status:
-                {{ order.status }}<br>
+                    <p>
+                        <strong>Order Status:</strong>
+                        {{ order.status }}
+                    </p>
 
-                Received:
-                {{ order.created_at }}
+                    <p>
+                        <strong>Received:</strong>
+                        {{ order.created_at }}
+                    </p>
 
-            </div>
+                </article>
 
             {% endfor %}
 
         {% else %}
 
-            <p>No payment records available.</p>
+            <p>No payment records yet.</p>
 
         {% endif %}
-
     </section>
 
     <p>

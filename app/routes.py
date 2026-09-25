@@ -12,6 +12,8 @@ from werkzeug.utils import secure_filename
 
 from . import db, limiter, csrf
 from .models import User, Product, Service, Order, OrderItem, ServiceRequest
+from .mpesa import get_mpesa_access_token
+from .models import BusinessSetting
 
 main = Blueprint("main", __name__)
 
@@ -349,6 +351,58 @@ def admin_update_order(order_id):
 
     return redirect(url_for("main.admin_orders"))
 
+@main.post("/admin/orders/<int:order_id>/mpesa")
+def initiate_mpesa_payment(order_id):
+    order = db.session.get(Order, order_id)
+
+    if order is None:
+        abort(404)
+
+    user = current_user()
+
+    if not session.get("admin"):
+        if user is None or order.user_id != user.id:
+            abort(403)
+
+    if order.payment_status == "paid":
+        return jsonify(error="Order is already marked as paid."), 400
+
+    try:
+        token = get_mpesa_access_token()
+    except Exception:
+        return jsonify(error="M-PESA payment service is not configured."), 503
+
+    return jsonify(
+        message="M-PESA connection is ready for payment initiation.",
+        order_id=order.id,
+        amount=str(order.total),
+        access_token_received=bool(token),
+    )
+
+
+@main.post("/admin/payments/settings")
+def save_payment_settings():
+    if not session.get("admin"):
+        abort(403)
+
+    till = clean_text(request.form.get("mpesa_till"), 20)
+
+    if till and not till.isdigit():
+        return "Invalid Till number.", 400
+
+    setting = BusinessSetting.query.filter_by(key="mpesa_till").first()
+
+    if setting is None:
+        setting = BusinessSetting(key="mpesa_till", value=till)
+        db.session.add(setting)
+    else:
+        setting.value = till
+
+    db.session.commit()
+
+    return redirect(url_for("main.admin_payments"))
+
+
 @main.get("/admin/payments")
 def admin_payments():
     if not session.get("admin"):
@@ -356,9 +410,14 @@ def admin_payments():
 
     orders = Order.query.order_by(Order.created_at.desc()).all()
 
+    till_setting = BusinessSetting.query.filter_by(
+        key="mpesa_till"
+    ).first()
+
     return render_template(
         "admin_payments.html",
-        orders=orders
+        orders=orders,
+        mpesa_till=till_setting.value if till_setting else ""
     )
 
 

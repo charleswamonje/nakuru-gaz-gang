@@ -63,6 +63,15 @@ def create_app():
         RESEND_API_KEY=os.getenv("RESEND_API_KEY"),
         RESEND_FROM=os.getenv("RESEND_FROM", ""),
         SHOW_DEV_EMAIL_LINK=os.getenv("SHOW_DEV_EMAIL_LINK", "false").lower() == "true",
+
+        # M-PESA / Safaricom Daraja
+        MPESA_ENV=os.getenv("MPESA_ENV", "sandbox"),
+        MPESA_CONSUMER_KEY=os.getenv("MPESA_CONSUMER_KEY", ""),
+        MPESA_CONSUMER_SECRET=os.getenv("MPESA_CONSUMER_SECRET", ""),
+        MPESA_SHORTCODE=os.getenv("MPESA_SHORTCODE", ""),
+        MPESA_PASSKEY=os.getenv("MPESA_PASSKEY", ""),
+        MPESA_CALLBACK_URL=os.getenv("MPESA_CALLBACK_URL", ""),
+        MPESA_TILL_NUMBER=os.getenv("MPESA_TILL_NUMBER", ""),
         SESSION_COOKIE_SECURE=production,
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",

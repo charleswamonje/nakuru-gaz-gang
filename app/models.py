@@ -71,6 +71,13 @@ class ServiceRequest(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True, index=True)
 
 
+class BusinessSetting(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(80), unique=True, nullable=False, index=True)
+    value = db.Column(db.String(500), default="", nullable=False)
+
+
+
 def seed_data():
     if Product.query.count() == 0:
         db.session.add_all([

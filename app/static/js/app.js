@@ -457,21 +457,71 @@ if (trackOrderButton) {
         return;
       }
 
-      const labels = {
-        received: 'Received',
-        confirmed: 'Confirmed',
-        out_for_delivery: 'Out for delivery',
-        delivered: 'Delivered',
-        cancelled: 'Cancelled'
-      };
+      const steps = [
+        ['received', 'Received'],
+        ['confirmed', 'Confirmed'],
+        ['processing', 'Processing'],
+        ['out_for_delivery', 'Out for Delivery'],
+        ['delivered', 'Delivered']
+      ];
 
-      const status = labels[data.status] || data.status || 'Unknown';
+      if (data.status === 'cancelled') {
+        result.innerHTML = `
+          <strong>Order #${data.order_id}</strong>
+          <div class="tracking-cancelled">
+            Order cancelled
+          </div>
+          <div class="tracking-payment">
+            <strong>Payment:</strong>
+            ${data.payment_status || 'pending'}
+          </div>
+        `;
+        return;
+      }
+
+      const currentIndex = steps.findIndex(
+        step => step[0] === data.status
+      );
+
+      const timeline = steps.map((step, index) => {
+        let className = 'tracking-step';
+
+        if (currentIndex >= 0 && index < currentIndex) {
+          className += ' completed';
+        } else if (currentIndex >= 0 && index === currentIndex) {
+          className += ' active';
+        }
+
+        return `
+          <div class="${className}">
+            <span class="tracking-step-number">${index + 1}</span>
+            <span class="tracking-step-label">${step[1]}</span>
+          </div>
+        `;
+      }).join('');
+
+      const statusLabel =
+        currentIndex >= 0
+          ? steps[currentIndex][1]
+          : data.status || 'Unknown';
 
       result.innerHTML = `
-        <strong>Order #${data.order_id}</strong><br>
-        <strong>Status:</strong> ${status}<br>
-        <strong>Payment:</strong> ${data.payment_status || 'pending'}
+        <strong>Order #${data.order_id}</strong>
+
+        <div class="tracking-status-line">
+          Current status: <strong>${statusLabel}</strong>
+        </div>
+
+        <div class="tracking-steps">
+          ${timeline}
+        </div>
+
+        <div class="tracking-payment">
+          <strong>Payment:</strong>
+          ${data.payment_status || 'pending'}
+        </div>
       `;
+
     } catch (error) {
       result.textContent = 'Unable to check the order right now.';
     }

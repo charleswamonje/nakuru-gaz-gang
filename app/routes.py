@@ -11,7 +11,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
 from . import db, limiter, csrf
-from .models import User, Product, Service, Order, OrderItem, ServiceRequest, StatusHistory
+from .models import User, Product, Service, Order, OrderItem, ServiceRequest, StatusHistory, Notification
 from .mpesa import get_mpesa_access_token
 from .models import BusinessSetting
 
@@ -104,6 +104,21 @@ def current_user():
     uid = session.get("user_id")
     return db.session.get(User, uid) if uid else None
 
+def create_notification(user_id, title, message, entity_type="", entity_id=None):
+    if not user_id:
+        return None
+
+    notification = Notification(
+        user_id=user_id,
+        title=clean_text(title, 160),
+        message=clean_text(message, 1000),
+        entity_type=clean_text(entity_type, 40),
+        entity_id=entity_id
+    )
+
+    db.session.add(notification)
+    return notification
+
 
 @main.get("/")
 def index():
@@ -190,6 +205,45 @@ def account_service_requests():
         user=user,
         request_rows=request_rows
     )
+
+
+@main.get("/account/notifications")
+def account_notifications():
+    user = current_user()
+
+    if user is None:
+        return redirect(url_for("main.auth_page"))
+
+    notifications = (
+        Notification.query
+        .filter_by(user_id=user.id)
+        .order_by(Notification.created_at.desc())
+        .all()
+    )
+
+    return render_template(
+        "account_notifications.html",
+        user=user,
+        notifications=notifications
+    )
+
+
+@main.post("/api/notifications/<int:notification_id>/read")
+def mark_notification_read(notification_id):
+    user = current_user()
+
+    if user is None:
+        return jsonify(error="Authentication required."), 401
+
+    notification = db.session.get(Notification, notification_id)
+
+    if notification is None or notification.user_id != user.id:
+        return jsonify(error="Notification not found."), 404
+
+    notification.is_read = True
+    db.session.commit()
+
+    return jsonify(message="Notification marked as read.")
 
 
 @main.get("/auth")
@@ -535,6 +589,18 @@ def admin_service_request_update(request_id):
             )
         )
 
+        if service_request.user_id:
+            create_notification(
+                user_id=service_request.user_id,
+                title=f"Service request #{service_request.id} status updated",
+                message=(
+                    f"Your service request is now "
+                    f"{status.replace('_', ' ')}."
+                ),
+                entity_type="service_request",
+                entity_id=service_request.id
+            )
+
     service_request.status = status
 
     db.session.commit()
@@ -605,6 +671,15 @@ def admin_update_order(order_id):
                 note="Order status updated by admin."
             )
         )
+
+        if order.user_id:
+            create_notification(
+                user_id=order.user_id,
+                title=f"Order #{order.id} status updated",
+                message=f"Your order is now {new_status.replace('_', ' ')}.",
+                entity_type="order",
+                entity_id=order.id
+            )
 
     order.status = new_status
     order.payment_status = request.form.get("payment_status", order.payment_status)

@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Nakuru Gaz Gang — Admin</title>
+<title>Muiruri Gas Delivery — Admin</title>
 <style>
 body{margin:0;background:#f4f4f4;color:#111;font-family:"Courier New",monospace}
 header{background:#111;color:#fff;padding:20px;display:flex;justify-content:space-between;align-items:center}
@@ -24,7 +24,7 @@ button{padding:10px 16px;font-family:inherit;font-weight:bold;cursor:pointer}
 <body>
 
 <header>
-<h1>NAKURU GAZ GANG — ADMIN</h1>
+<h1>MUIRURI GAS DELIVERY — ADMIN</h1>
 <form method="POST" action="{{ url_for('main.admin_logout') }}">
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 <button type="submit">LOG OUT</button>
@@ -33,7 +33,7 @@ button{padding:10px 16px;font-family:inherit;font-weight:bold;cursor:pointer}
 
 <main>
 <h2>Admin Dashboard</h2>
-<p>Manage and monitor the Nakuru Gaz Gang website.</p>
+<p>Manage and monitor the Muiruri Gas Delivery website.</p>
 
 <div class="stats">
 <div class="card">PRODUCTS<div class="number">{{ stats.products }}</div></div>

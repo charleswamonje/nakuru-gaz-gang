@@ -117,3 +117,22 @@ class StatusHistory(db.Model):
         index=True
     )
 
+
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=False,
+        index=True
+    )
+    title = db.Column(db.String(160), nullable=False)
+    message = db.Column(db.String(1000), nullable=False)
+    entity_type = db.Column(db.String(40), default="", nullable=False, index=True)
+    entity_id = db.Column(db.Integer, nullable=True, index=True)
+    is_read = db.Column(db.Boolean, default=False, nullable=False, index=True)
+    created_at = db.Column(
+        db.DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        index=True
+    )

@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>Notifications | Muiruri Gas Delivery</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<header class="site-header">
+
+    <a class="brand" href="{{ url_for('main.index') }}">
+        MUIRURI GAS DELIVERY
+    </a>
+
+    <nav>
+        <a class="linkbutton"
+           href="{{ url_for('main.account_orders') }}">
+            MY ORDERS
+        </a>
+
+        <a class="linkbutton"
+           href="{{ url_for('main.account_service_requests') }}">
+            MY SERVICES
+        </a>
+
+        <a class="linkbutton"
+           href="{{ url_for('main.index') }}">
+            HOME
+        </a>
+    </nav>
+
+</header>
+
+<main>
+
+<section class="hero">
+
+    <p class="eyebrow">CUSTOMER ACCOUNT</p>
+
+    <h1>
+        NOTIFICATIONS
+    </h1>
+
+    <p class="hero-text">
+        Updates about your orders and service requests.
+    </p>
+
+</section>
+
+<section class="account-section">
+
+    {% if notifications %}
+
+        <div class="tracking-history-list">
+
+            {% for notification in notifications %}
+
+                <article
+                    class="tracking-history-item{% if not notification.is_read %} notification-unread{% endif %}"
+                    data-notification-id="{{ notification.id }}"
+                >
+
+                    <strong>
+                        {{ notification.title }}
+                    </strong>
+
+                    <span>
+                        {{ notification.created_at.strftime('%d %b %Y, %H:%M') if notification.created_at else '' }}
+                    </span>
+
+                    <p>
+                        {{ notification.message }}
+                    </p>
+
+                    {% if not notification.is_read %}
+                        <button
+                            type="button"
+                            class="notification-read-button"
+                            data-notification-id="{{ notification.id }}"
+                        >
+                            MARK AS READ
+                        </button>
+                    {% else %}
+                        <span>
+                            Read
+                        </span>
+                    {% endif %}
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="tracking-history">
+            <h3>No notifications yet.</h3>
+            <p>
+                Order and service updates will appear here.
+            </p>
+        </div>
+
+    {% endif %}
+
+</section>
+
+</main>
+
+<script>
+document.querySelectorAll('.notification-read-button')
+    .forEach(button => {
+
+        button.addEventListener('click', async () => {
+
+            const id = button.dataset.notificationId;
+
+            try {
+
+                const response = await fetch(
+                    `/api/notifications/${encodeURIComponent(id)}/read`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken':
+                                document.querySelector(
+                                    'meta[name="csrf-token"]'
+                                )?.content || ''
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    return;
+                }
+
+                const item =
+                    button.closest('[data-notification-id]');
+
+                button.remove();
+
+                if (item) {
+                    item.classList.remove('notification-unread');
+                }
+
+            } catch (error) {
+                console.error(
+                    'Unable to mark notification as read.',
+                    error
+                );
+            }
+        });
+
+    });
+</script>
+
+</body>
+</html>

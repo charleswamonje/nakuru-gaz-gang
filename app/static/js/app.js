@@ -301,10 +301,16 @@
 
       const d = await r.json();
 
-      result.textContent =
-        d.error ||
-        d.message ||
-        'Request failed.';
+      if (r.ok && d.request_id) {
+        result.textContent =
+          `SERVICE REQUEST RECEIVED — Request #${d.request_id}. ` +
+          `Keep this number and your phone number to track the request.`;
+      } else {
+        result.textContent =
+          d.error ||
+          d.message ||
+          'Request failed.';
+      }
 
     }catch(e){
       result.textContent =

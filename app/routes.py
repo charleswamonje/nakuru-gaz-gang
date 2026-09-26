@@ -338,6 +338,64 @@ def create_service_request():
     return jsonify(message="Service request received.", request_id=r.id)
 
 
+@main.get("/admin/service-requests")
+def admin_service_requests():
+    if not session.get("admin"):
+        abort(403)
+
+    requests = (
+        ServiceRequest.query
+        .order_by(ServiceRequest.created_at.desc())
+        .all()
+    )
+
+    request_rows = []
+
+    for service_request in requests:
+        service = db.session.get(Service, service_request.service_id)
+
+        request_rows.append({
+            "request": service_request,
+            "service": service
+        })
+
+    return render_template(
+        "admin_service_requests.html",
+        request_rows=request_rows
+    )
+
+
+@main.post("/admin/service-requests/<int:request_id>/update")
+def admin_service_request_update(request_id):
+    if not session.get("admin"):
+        abort(403)
+
+    service_request = db.session.get(ServiceRequest, request_id)
+
+    if not service_request:
+        abort(404)
+
+    allowed_statuses = {
+        "received",
+        "contacted",
+        "scheduled",
+        "in_progress",
+        "completed",
+        "cancelled"
+    }
+
+    status = clean_text(request.form.get("status"), 40)
+
+    if status not in allowed_statuses:
+        return "Invalid service-request status.", 400
+
+    service_request.status = status
+
+    db.session.commit()
+
+    return redirect(url_for("main.admin_service_requests"))
+
+
 @main.get("/admin/login")
 def admin_login_page():
     return render_template("admin_login.html")

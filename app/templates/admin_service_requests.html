@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Nakuru Gaz Gang — Service Requests</title>
+
+<style>
+body{
+    margin:0;
+    background:#f4f4f4;
+    color:#111;
+    font-family:"Courier New",monospace;
+}
+
+header{
+    background:#111;
+    color:#fff;
+    padding:20px;
+}
+
+main{
+    width:94%;
+    max-width:1100px;
+    margin:30px auto;
+}
+
+a{
+    color:#111;
+    font-weight:bold;
+}
+
+.request{
+    background:#fff;
+    border:1px solid #ccc;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+.request h2{
+    margin-top:0;
+}
+
+.meta{
+    line-height:1.7;
+}
+
+.controls{
+    margin-top:20px;
+    padding-top:20px;
+    border-top:1px solid #ddd;
+}
+
+select,
+button{
+    padding:10px;
+    font-family:inherit;
+    font-weight:bold;
+}
+
+button{
+    cursor:pointer;
+}
+
+.status{
+    display:inline-block;
+    padding:5px 9px;
+    border:1px solid #111;
+    font-weight:bold;
+}
+
+.empty{
+    background:#fff;
+    border:1px solid #ccc;
+    padding:25px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>NAKURU GAZ GANG — SERVICE REQUESTS</h1>
+</header>
+
+<main>
+
+<p>
+    <a href="{{ url_for('main.admin') }}">← BACK TO DASHBOARD</a>
+</p>
+
+<h2>Technical & Service Requests</h2>
+
+<p>
+    Requests submitted by customers through the Nakuru Gaz Gang website.
+</p>
+
+{% if request_rows %}
+
+    {% for row in request_rows %}
+
+    <section class="request">
+
+        <h2>
+            Service Request #{{ row.request.id }}
+        </h2>
+
+        <div class="meta">
+
+            <strong>Customer:</strong>
+            {{ row.request.customer_name }}
+
+            <br>
+
+            <strong>Phone:</strong>
+            {{ row.request.phone }}
+
+            <br>
+
+            <strong>Area:</strong>
+            {{ row.request.area }}
+
+            <br>
+
+            <strong>Service:</strong>
+            {{ row.service.name if row.service else "Service unavailable" }}
+
+            <br>
+
+            <strong>Category:</strong>
+            {{ row.service.category if row.service else "—" }}
+
+            <br>
+
+            <strong>Description:</strong>
+            {{ row.request.description or "None provided" }}
+
+            <br>
+
+            <strong>Status:</strong>
+            <span class="status">
+                {{ row.request.status }}
+            </span>
+
+            <br>
+
+            <strong>Received:</strong>
+            {{ row.request.created_at }}
+
+        </div>
+
+        <div class="controls">
+
+            <form
+                method="POST"
+                action="{{ url_for('main.admin_service_request_update', request_id=row.request.id) }}"
+            >
+
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+
+                <label for="status-{{ row.request.id }}">
+                    <strong>Request status</strong>
+                </label>
+
+                <select
+                    id="status-{{ row.request.id }}"
+                    name="status"
+                >
+
+                    {% for value, label in [
+                        ("received", "Received"),
+                        ("contacted", "Contacted"),
+                        ("scheduled", "Scheduled"),
+                        ("in_progress", "In Progress"),
+                        ("completed", "Completed"),
+                        ("cancelled", "Cancelled")
+                    ] %}
+
+                    <option
+                        value="{{ value }}"
+                        {% if row.request.status == value %}
+                        selected
+                        {% endif %}
+                    >
+                        {{ label }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+                <button type="submit">
+                    SAVE REQUEST STATUS
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+    {% endfor %}
+
+{% else %}
+
+    <div class="empty">
+        No service requests have been received.
+    </div>
+
+{% endif %}
+
+</main>
+
+</body>
+</html>

@@ -30,6 +30,9 @@
     <a class="linkbutton" href="{{ url_for('main.account_orders') }}">
         MY ORDERS
     </a>
+    <a class="linkbutton" href="{{ url_for('main.account_service_requests') }}">
+        MY SERVICE REQUESTS
+    </a>
 
     <form
         method="post"
@@ -660,6 +663,7 @@
 <!-- ================= SERVICE REQUEST TRACKING ================= -->
 
 <div
+    id="service-request-tracking"
     class="order-tracking"
     style="margin-top:25px;padding:18px;border:1px solid rgba(255,255,255,.12);border-radius:12px;"
 >

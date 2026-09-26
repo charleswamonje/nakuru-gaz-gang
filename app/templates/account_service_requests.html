@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>My Service Requests — Nakuru Gaz Gang</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+</head>
+
+<body>
+
+<header>
+    <div class="brand">
+        <strong>NAKURU GAZ GANG</strong>
+    </div>
+
+    <div class="tagline">
+        RELIABLE ON TIME CLEAN AND STRONG.
+    </div>
+
+    <a class="phone" href="tel:0710525480">
+        0710525480
+    </a>
+</header>
+
+<main>
+
+<section class="panel">
+
+    <p class="eyebrow">CUSTOMER ACCOUNT</p>
+
+    <h1>My Service Requests</h1>
+
+    <p>
+        Signed in as <strong>{{ user.email }}</strong>
+    </p>
+
+    <p>
+        View your technical service requests and their current status.
+    </p>
+
+    {% if request_rows %}
+
+        {% for row in request_rows %}
+
+        <article class="card" style="margin-top:20px;">
+
+            <h2>
+                Service Request #{{ row.request.id }}
+            </h2>
+
+            <p>
+                <strong>Date:</strong>
+                {{ row.request.created_at.strftime('%d %b %Y, %H:%M') if row.request.created_at else 'Unknown' }}
+            </p>
+
+            <p>
+                <strong>Service:</strong>
+                {{ row.service.name if row.service else 'Service unavailable' }}
+            </p>
+
+            <p>
+                <strong>Area:</strong>
+                {{ row.request.area }}
+            </p>
+
+            <p>
+                <strong>Status:</strong>
+                <span class="order-status-badge status-{{ row.request.status|replace('_', '-') }}">
+                    {{ row.request.status|replace('_', ' ')|title }}
+                </span>
+            </p>
+
+            {% if row.request.description %}
+
+            <p>
+                <strong>Description:</strong>
+                {{ row.request.description }}
+            </p>
+
+            {% endif %}
+
+            <a
+                class="linkbutton"
+                href="{{ url_for('main.index') }}#service-request-tracking"
+            >
+                TRACK SERVICE REQUEST
+            </a>
+
+        </article>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="card" style="margin-top:20px;">
+
+            <h2>No service requests yet</h2>
+
+            <p>
+                Technical service requests you place while signed in
+                will appear here.
+            </p>
+
+            <a
+                class="linkbutton"
+                href="{{ url_for('main.index') }}#service-request"
+            >
+                REQUEST A SERVICE
+            </a>
+
+        </div>
+
+    {% endif %}
+
+    <p style="margin-top:20px;">
+
+        <a
+            class="linkbutton"
+            href="{{ url_for('main.account_orders') }}"
+        >
+            MY ORDERS
+        </a>
+
+        <a
+            class="linkbutton"
+            href="{{ url_for('main.index') }}"
+        >
+            BACK TO WEBSITE
+        </a>
+
+    </p>
+
+</section>
+
+</main>
+
+</body>
+</html>

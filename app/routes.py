@@ -161,6 +161,37 @@ def account_orders():
     )
 
 
+@main.get("/account/service-requests")
+def account_service_requests():
+    user = current_user()
+
+    if user is None:
+        return redirect(url_for("main.auth_page"))
+
+    requests = (
+        ServiceRequest.query
+        .filter_by(user_id=user.id)
+        .order_by(ServiceRequest.created_at.desc())
+        .all()
+    )
+
+    request_rows = []
+
+    for service_request in requests:
+        service = db.session.get(Service, service_request.service_id)
+
+        request_rows.append({
+            "request": service_request,
+            "service": service
+        })
+
+    return render_template(
+        "account_service_requests.html",
+        user=user,
+        request_rows=request_rows
+    )
+
+
 @main.get("/auth")
 def auth_page():
     return render_template("auth.html", user=current_user())

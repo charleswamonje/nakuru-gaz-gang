@@ -294,6 +294,32 @@ def order_status(order_id):
     )
 
 
+@main.get("/api/service-requests/<int:request_id>/status")
+@limiter.limit("20 per minute")
+def service_request_status(request_id):
+    phone = clean_text(request.args.get("phone"), 30)
+
+    if not phone:
+        return jsonify(error="Phone number is required."), 400
+
+    service_request = db.session.get(ServiceRequest, request_id)
+
+    if service_request is None or service_request.phone != phone:
+        return jsonify(error="Service request not found."), 404
+
+    service = db.session.get(Service, service_request.service_id)
+
+    return jsonify(
+        request_id=service_request.id,
+        status=service_request.status,
+        service_name=service.name if service else "Service unavailable",
+        created_at=(
+            service_request.created_at.isoformat()
+            if service_request.created_at else None
+        )
+    )
+
+
 @main.post("/api/orders/<int:order_id>/payment-reference")
 @limiter.limit("10 per minute")
 def submit_payment_reference(order_id):

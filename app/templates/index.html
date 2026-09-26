@@ -600,6 +600,52 @@
 
 
 <div class="order-tracking" style="margin-top:25px;padding:18px;border:1px solid rgba(255,255,255,.12);border-radius:12px;"><p class="eyebrow">ORDER TRACKING</p><h3>Track Your Order</h3><p>Enter your order number and the phone number used when ordering.</p><input type="number" id="trackingOrderId" placeholder="Order number" min="1" style="width:100%;padding:12px;margin-top:6px;"><input type="text" id="trackingPhone" placeholder="Phone number" maxlength="30" style="width:100%;padding:12px;margin-top:8px;"><button type="button" id="trackOrder" style="margin-top:10px;">TRACK ORDER</button><div id="trackingResult" style="margin-top:15px;"></div></div>
+<!-- ================= SERVICE REQUEST TRACKING ================= -->
+
+<div
+    class="order-tracking"
+    style="margin-top:25px;padding:18px;border:1px solid rgba(255,255,255,.12);border-radius:12px;"
+>
+    <p class="eyebrow">SERVICE REQUEST TRACKING</p>
+
+    <h3>Track Your Service Request</h3>
+
+    <p>
+        Enter your service request number and the phone number used
+        when requesting the service.
+    </p>
+
+    <input
+        type="number"
+        id="trackingServiceRequestId"
+        placeholder="Service request number"
+        min="1"
+        style="width:100%;padding:12px;margin-top:6px;"
+    >
+
+    <input
+        type="text"
+        id="trackingServicePhone"
+        placeholder="Phone number"
+        maxlength="30"
+        style="width:100%;padding:12px;margin-top:8px;"
+    >
+
+    <button
+        type="button"
+        id="trackServiceRequest"
+        style="margin-top:10px;"
+    >
+        TRACK SERVICE REQUEST
+    </button>
+
+    <div
+        id="serviceRequestTrackingResult"
+        style="margin-top:15px;"
+    ></div>
+</div>
+
+
 <!-- ================= SERVICE REQUEST ================= -->
 
 <section class="panel" id="service-request">

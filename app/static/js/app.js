@@ -219,6 +219,68 @@
     }
   }
 
+  const trackServiceRequestButton =
+    document.getElementById('trackServiceRequest');
+
+  if (trackServiceRequestButton) {
+    trackServiceRequestButton.addEventListener('click', async () => {
+
+      const requestId =
+        document.getElementById('trackingServiceRequestId').value.trim();
+
+      const phone =
+        document.getElementById('trackingServicePhone').value.trim();
+
+      const result =
+        document.getElementById('serviceRequestTrackingResult');
+
+      if (!requestId || !phone) {
+        result.textContent =
+          'Enter your service request number and phone number.';
+        return;
+      }
+
+      result.textContent = 'Checking service request status...';
+
+      try {
+        const response = await fetch(
+          `/api/service-requests/${encodeURIComponent(requestId)}/status?phone=${encodeURIComponent(phone)}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          result.textContent =
+            data.error || 'Service request not found.';
+          return;
+        }
+
+        const labels = {
+          received: 'Received',
+          contacted: 'Contacted',
+          scheduled: 'Scheduled',
+          in_progress: 'In Progress',
+          completed: 'Completed',
+          cancelled: 'Cancelled'
+        };
+
+        const status =
+          labels[data.status] || data.status || 'Unknown';
+
+        result.innerHTML = `
+          <strong>Service Request #${data.request_id}</strong><br>
+          <strong>Service:</strong> ${data.service_name || 'Unknown'}<br>
+          <strong>Status:</strong> ${status}
+        `;
+
+      } catch (error) {
+        result.textContent =
+          'Unable to check the service request right now.';
+      }
+    });
+  }
+
+
   async function submitService(){
     const result = document.getElementById('serviceResult');
 

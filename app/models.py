@@ -104,3 +104,16 @@ def seed_data():
         ]
         db.session.add_all([Service(name=n, category=c, description="Request this service and we will contact you.", price=0) for n, c in names])
     db.session.commit()
+
+class StatusHistory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    entity_type = db.Column(db.String(40), nullable=False, index=True)
+    entity_id = db.Column(db.Integer, nullable=False, index=True)
+    status = db.Column(db.String(40), nullable=False)
+    note = db.Column(db.String(500), default="")
+    created_at = db.Column(
+        db.DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        index=True
+    )
+

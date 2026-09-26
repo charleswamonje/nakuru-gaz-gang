@@ -11,7 +11,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
 from . import db, limiter, csrf
-from .models import User, Product, Service, Order, OrderItem, ServiceRequest
+from .models import User, Product, Service, Order, OrderItem, ServiceRequest, StatusHistory
 from .mpesa import get_mpesa_access_token
 from .models import BusinessSetting
 
@@ -486,6 +486,16 @@ def admin_service_request_update(request_id):
     if status not in allowed_statuses:
         return "Invalid service-request status.", 400
 
+    if status != service_request.status:
+        db.session.add(
+            StatusHistory(
+                entity_type="service_request",
+                entity_id=service_request.id,
+                status=status,
+                note="Service request status updated by admin."
+            )
+        )
+
     service_request.status = status
 
     db.session.commit()
@@ -545,7 +555,19 @@ def admin_update_order(order_id):
     if order is None:
         abort(404)
 
-    order.status = request.form.get("status", order.status)
+    new_status = request.form.get("status", order.status)
+
+    if new_status != order.status:
+        db.session.add(
+            StatusHistory(
+                entity_type="order",
+                entity_id=order.id,
+                status=new_status,
+                note="Order status updated by admin."
+            )
+        )
+
+    order.status = new_status
     order.payment_status = request.form.get("payment_status", order.payment_status)
     order.payment_method = request.form.get("payment_method", order.payment_method)
     order.payment_reference = request.form.get("payment_reference", order.payment_reference)

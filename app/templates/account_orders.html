@@ -66,12 +66,16 @@
 
             <p>
                 <strong>Order status:</strong>
-                {{ row.order.status|replace('_', ' ')|title }}
+                <span class="order-status-badge status-{{ row.order.status|replace('_', '-') }}">
+                    {{ row.order.status|replace('_', ' ')|title }}
+                </span>
             </p>
 
             <p>
                 <strong>Payment status:</strong>
-                {{ row.order.payment_status|replace('_', ' ')|title }}
+                <span class="payment-status-badge status-{{ row.order.payment_status|replace('_', '-') }}">
+                    {{ row.order.payment_status|replace('_', ' ')|title }}
+                </span>
             </p>
 
             {% if row.items %}

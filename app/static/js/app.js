@@ -528,6 +528,18 @@ if (trackOrderButton) {
   });
 }
 
+/* ================= PREFILL ORDER TRACKING ================= */
+
+(function () {
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get('order');
+  const trackingField = document.getElementById('trackingOrderId');
+
+  if (orderId && trackingField) {
+    trackingField.value = orderId;
+  }
+})();
+
 /* ================= PRODUCT IMAGE VIEWER ================= */
 
 (function () {

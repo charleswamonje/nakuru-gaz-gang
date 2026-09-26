@@ -108,6 +108,13 @@
 
             <a
                 class="linkbutton"
+                href="{{ url_for('main.index', order=row.order.id) }}#order-tracking"
+            >
+                TRACK THIS ORDER
+            </a>
+
+            <a
+                class="linkbutton"
                 href="{{ url_for('main.index') }}"
             >
                 BACK TO WEBSITE

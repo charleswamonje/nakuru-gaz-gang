@@ -121,6 +121,46 @@ def index():
     )
 
 
+@main.get("/account/orders")
+def account_orders():
+    user = current_user()
+
+    if user is None:
+        return redirect(url_for("main.auth_page"))
+
+    orders = (
+        Order.query
+        .filter_by(user_id=user.id)
+        .order_by(Order.created_at.desc())
+        .all()
+    )
+
+    order_rows = []
+
+    for order in orders:
+        items = OrderItem.query.filter_by(order_id=order.id).all()
+        item_rows = []
+
+        for item in items:
+            product = db.session.get(Product, item.product_id)
+
+            item_rows.append({
+                "item": item,
+                "product": product
+            })
+
+        order_rows.append({
+            "order": order,
+            "items": item_rows
+        })
+
+    return render_template(
+        "account_orders.html",
+        user=user,
+        order_rows=order_rows
+    )
+
+
 @main.get("/auth")
 def auth_page():
     return render_template("auth.html", user=current_user())

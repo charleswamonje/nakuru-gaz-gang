@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>My Orders — Nakuru Gaz Gang</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+</head>
+
+<body>
+
+<header>
+    <div class="brand">
+        <strong>NAKURU GAZ GANG</strong>
+    </div>
+
+    <div class="tagline">
+        RELIABLE ON TIME CLEAN AND STRONG.
+    </div>
+
+    <a class="phone" href="tel:0710525480">
+        0710525480
+    </a>
+</header>
+
+<main>
+
+<section class="panel">
+
+    <p class="eyebrow">CUSTOMER ACCOUNT</p>
+
+    <h1>My Orders</h1>
+
+    <p>
+        Signed in as <strong>{{ user.email }}</strong>
+    </p>
+
+    <p>
+        View your previous orders, order status and payment status.
+    </p>
+
+    {% if order_rows %}
+
+        {% for row in order_rows %}
+
+        <article class="card" style="margin-top:20px;">
+
+            <h2>Order #{{ row.order.id }}</h2>
+
+            <p>
+                <strong>Date:</strong>
+                {{ row.order.created_at.strftime('%d %b %Y, %H:%M') if row.order.created_at else 'Unknown' }}
+            </p>
+
+            <p>
+                <strong>Delivery area:</strong>
+                {{ row.order.delivery_area }}
+            </p>
+
+            <p>
+                <strong>Order status:</strong>
+                {{ row.order.status|replace('_', ' ')|title }}
+            </p>
+
+            <p>
+                <strong>Payment status:</strong>
+                {{ row.order.payment_status|replace('_', ' ')|title }}
+            </p>
+
+            {% if row.items %}
+
+            <div style="margin-top:15px;">
+
+                <strong>Items</strong>
+
+                <ul>
+                    {% for item_row in row.items %}
+                    <li>
+                        {% if item_row.product %}
+                            {{ item_row.product.name }}
+                        {% else %}
+                            Product #{{ item_row.item.product_id }}
+                        {% endif %}
+
+                        × {{ item_row.item.quantity }}
+
+                        — KSh
+                        {{ '%.2f'|format(item_row.item.unit_price|float * item_row.item.quantity) }}
+                    </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+
+            {% endif %}
+
+            <p style="margin-top:15px;">
+                <strong>Total:</strong>
+                KSh {{ '%.2f'|format(row.order.total|float) }}
+            </p>
+
+            <a
+                class="linkbutton"
+                href="{{ url_for('main.index') }}"
+            >
+                BACK TO WEBSITE
+            </a>
+
+        </article>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="card" style="margin-top:20px;">
+            <h2>No orders yet</h2>
+
+            <p>
+                Orders you place while signed in will appear here.
+            </p>
+
+            <a
+                class="linkbutton"
+                href="{{ url_for('main.index') }}#products"
+            >
+                ORDER WATER & GAS
+            </a>
+        </div>
+
+    {% endif %}
+
+</section>
+
+</main>
+
+</body>
+</html>

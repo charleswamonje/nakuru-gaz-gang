@@ -25,6 +25,27 @@
     <a class="phone" href="tel:0710525480">
         0710525480
     </a>
+
+    {% if user %}
+    <a class="linkbutton" href="{{ url_for('main.account_orders') }}">
+        MY ORDERS
+    </a>
+
+    <form
+        method="post"
+        action="{{ url_for('main.logout') }}"
+        style="display:inline;"
+    >
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit">
+            SIGN OUT
+        </button>
+    </form>
+    {% else %}
+    <a class="linkbutton" href="{{ url_for('main.auth_page') }}">
+        CUSTOMER ACCOUNT
+    </a>
+    {% endif %}
 </header>
 
 

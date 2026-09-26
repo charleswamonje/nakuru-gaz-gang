@@ -1,1 +1,123 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="csrf-token" content="{{ csrf_token() }}"><title>Account — Muiruri Gas Delivery</title><link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"></head><body><main><section class="panel"><h1>Muiruri Gas Delivery Account</h1><p>Create an account with your email and a strong password.</p><form id="register" data-url="{{ url_for("main.register") }}"><input name="email" type="email" placeholder="Email" required><input name="password" type="password" placeholder="Password (12+ chars, upper/lower/number/symbol)" required><button>Create account</button></form><hr><form id="login" data-url="{{ url_for("main.login") }}"><input name="email" type="email" placeholder="Email" required><input name="password" type="password" placeholder="Password" required><button>Sign in</button></form><hr><form id="reset-request" data-url="{{ url_for("main.request_password_reset") }}"><input name="email" type="email" placeholder="Email for password reset" required><button>Request password reset</button></form><p id="result"></p><p><a href="{{ url_for('main.index') }}">Back to website</a></p></section></main><script src="{{ url_for('static', filename='js/app.js') }}"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<title>Account — Muiruri Gas Delivery</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+.account-panel {
+  max-width: 520px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.07);
+}
+.account-panel form {
+  display: block;
+  margin: 20px 0;
+}
+.account-panel input {
+  display: block;
+  width: 100%;
+  height: 50px;
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  font: inherit;
+  background: #fff;
+  color: #1f2937;
+}
+.account-panel button {
+  display: inline-block;
+  margin-top: 4px;
+}
+.account-panel hr {
+  margin: 28px 0;
+}
+#result {
+  margin-top: 18px;
+  font-weight: 600;
+}
+</style>
+</head>
+
+<body>
+<main>
+<section class="account-panel">
+
+<h1>Muiruri Gas Delivery Account</h1>
+
+<p>Create an account with your email and a strong password.</p>
+
+<form id="register" data-url="{{ url_for('main.register') }}">
+  <input
+    name="email"
+    type="email"
+    placeholder="Email"
+    autocomplete="email"
+    required
+  >
+
+  <input
+    name="password"
+    type="password"
+    placeholder="Password (12+ chars, upper/lower/number/symbol)"
+    autocomplete="new-password"
+    required
+  >
+
+  <button type="submit">Create account</button>
+</form>
+
+<hr>
+
+<form id="login" data-url="{{ url_for('main.login') }}">
+  <input
+    name="email"
+    type="email"
+    placeholder="Email"
+    autocomplete="email"
+    required
+  >
+
+  <input
+    name="password"
+    type="password"
+    placeholder="Password"
+    autocomplete="current-password"
+    required
+  >
+
+  <button type="submit">Sign in</button>
+</form>
+
+<hr>
+
+<form id="reset-request" data-url="{{ url_for('main.request_password_reset') }}">
+  <input
+    name="email"
+    type="email"
+    placeholder="Email for password reset"
+    autocomplete="email"
+    required
+  >
+
+  <button type="submit">Request password reset</button>
+</form>
+
+<p id="result"></p>
+
+<p>
+  <a href="{{ url_for('main.index') }}">Back to website</a>
+</p>
+
+</section>
+</main>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

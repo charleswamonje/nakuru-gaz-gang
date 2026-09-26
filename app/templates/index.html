@@ -7,7 +7,7 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <meta name="description"
-      content="Muiruri Gas Delivery provides drinking water delivery, gas cylinder delivery and refills, and technology services across Nakuru, Kenya. Order water and gas or request local technical support.">
+      content="Muiruri Gas Delivery provides drinking water delivery, gas cylinder delivery and refills, and technology services across {{ business.business_location }}. Order water and gas or request local technical support.">
 <meta name="keywords"
       content="Muiruri Gas Delivery, gas delivery Nakuru, gas refill Nakuru, cooking gas Nakuru, water delivery Nakuru, drinking water delivery Nakuru, technology services Nakuru, Wi-Fi support Nakuru, computer services Nakuru">
 <meta name="author" content="Muiruri Gas Delivery">
@@ -17,7 +17,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Muiruri Gas Delivery | Water, Gas & Technology Services">
 <meta property="og:description"
-      content="Water delivery, gas delivery and refills, plus practical technology support across Nakuru, Kenya.">
+      content="Water delivery, gas delivery and refills, plus practical technology support across {{ business.business_location }}.">
 <meta property="og:url" content="https://charles511.pythonanywhere.com/">
 <meta property="og:site_name" content="Muiruri Gas Delivery">
 <meta property="og:locale" content="en_KE">
@@ -31,14 +31,14 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Muiruri Gas Delivery">
 <meta name="twitter:description"
-      content="Water delivery, gas delivery and local technology services across Nakuru, Kenya.">
+      content="Water delivery, gas delivery and local technology services across {{ business.business_location }}.">
 
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
   "name": "Muiruri Gas Delivery",
-  "description": "Drinking water delivery, gas cylinder delivery and refills, and local technology services in Nakuru, Kenya.",
+  "description": "Drinking water delivery, gas cylinder delivery and refills, and local technology services in {{ business.business_location }}.",
   "url": "https://charles511.pythonanywhere.com/",
   "telephone": "+254710524548",
   "areaServed": {
@@ -62,15 +62,15 @@
 
 <header>
     <div class="brand">
-        <strong>MUIRURI GAS DELIVERY</strong>
+        <strong>{{ business.business_name }}</strong>
     </div>
 
     <div class="tagline">
-        RELIABLE ON TIME CLEAN AND STRONG.
+        {{ business.business_tagline }}
     </div>
 
-    <a class="phone" href="tel:0710525480">
-        0710525480
+    <a class="phone" href="tel:{{ business.customer_care_phone }}">
+        {{ business.customer_care_phone }}
     </a>
 
     {% if user %}
@@ -216,7 +216,7 @@
 
         <p class="eyebrow">OUR STANDARD</p>
 
-        <h2>Reliable on time clean and strong.</h2>
+        <h2>{{ business.business_vision }}</h2>
 
         <p>
             This is more than a slogan. It is the standard we aim
@@ -234,8 +234,7 @@
         <h2>Dependable local service.</h2>
 
         <p>
-            To provide dependable water, gas delivery and authorized
-            technical support to customers in Nakuru.
+            {{ business.business_mission }}
         </p>
 
     </div>
@@ -556,7 +555,7 @@
 
             <p>
                 Direct customer care is available through
-                0710525480.
+                {{ business.customer_care_phone }}.
             </p>
 
         </article>
@@ -639,7 +638,7 @@
 
         <br>
 
-        0710525480
+        {{ business.customer_care_phone }}
 
         {% if mpesa_till %}
         <br><br>
@@ -847,15 +846,15 @@
 
         <a
             class="linkbutton"
-            href="tel:0710525480"
+            href="tel:{{ business.customer_care_phone }}"
         >
-            CALL 0710525480
+            CALL {{ business.customer_care_phone }}
         </a>
 
 
         <a
             class="linkbutton"
-            href="https://wa.me/254710525480"
+            href="{{ whatsapp_url }}"
             target="_blank"
             rel="noopener noreferrer"
         >
@@ -866,7 +865,7 @@
 
 
     <p>
-        <strong>Customer care: 0710525480</strong><br>
+        <strong>Customer care: {{ business.customer_care_phone }}</strong><br>
         Call for delivery enquiries, repeat orders,
         scheduling and customer support.
     </p>
@@ -876,8 +875,8 @@
 
     <p>
         Customer email:
-        <a href="mailto:redgroup@gmail.com">
-            redgroup@gmail.com
+        <a href="mailto:{{ business.business_email }}">
+            {{ business.business_email }}
         </a>
     </p>
 
@@ -935,15 +934,15 @@
 
 <footer>
 
-    <strong>MUIRURI GAS DELIVERY</strong>
+    <strong>{{ business.business_name }}</strong>
 
     <br>
 
-    Nakuru, Kenya
+    {{ business.business_location }}
 
     <br>
 
-    Reliable on time clean and strong.
+    {{ business.business_vision }}
 
 </footer>
 

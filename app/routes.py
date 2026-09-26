@@ -124,15 +124,41 @@ def create_notification(user_id, title, message, entity_type="", entity_id=None)
 def index():
     products = Product.query.filter_by(active=True).order_by(Product.id).all()
     services = Service.query.filter_by(active=True).order_by(Service.category, Service.id).all()
+
     till_setting = BusinessSetting.query.filter_by(key="mpesa_till").first()
     mpesa_till = till_setting.value if till_setting else ""
+
+    business_defaults = {
+        "business_name": "MUIRURI GAS DELIVERY",
+        "customer_care_phone": "0710525480",
+        "business_email": "redgroup@gmail.com",
+        "whatsapp_number": "254710525480",
+        "business_location": "Nakuru, Kenya",
+        "business_tagline": "RELIABLE ON TIME CLEAN AND STRONG.",
+        "business_mission": "To provide dependable water, gas delivery and authorized technical support to customers in Nakuru.",
+        "business_vision": "Reliable on time clean and strong.",
+    }
+
+    business = {}
+
+    for key, default in business_defaults.items():
+        setting = BusinessSetting.query.filter_by(key=key).first()
+        business[key] = setting.value.strip() if setting and setting.value.strip() else default
+
+    whatsapp_number = business["whatsapp_number"]
+    if whatsapp_number.startswith("0"):
+        whatsapp_number = "254" + whatsapp_number[1:]
+    whatsapp_url = "https://wa.me/" + whatsapp_number
+
     return render_template(
         "index.html",
         products=products,
         services=services,
         email_public=email_public(),
         user=current_user(),
-        mpesa_till=mpesa_till
+        mpesa_till=mpesa_till,
+        business=business,
+        whatsapp_url=whatsapp_url
     )
 
 

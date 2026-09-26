@@ -267,10 +267,42 @@
         const status =
           labels[data.status] || data.status || 'Unknown';
 
+        const history = Array.isArray(data.history)
+          ? data.history
+          : [];
+
+        const historyHtml = history.length
+          ? `
+            <div class="tracking-history">
+              <h4>Status history</h4>
+              <div class="tracking-history-list">
+                ${history.map(item => {
+                  const label = String(item.status || 'Unknown')
+                    .replace(/_/g, ' ')
+                    .replace(/\b\w/g, c => c.toUpperCase());
+
+                  const date = item.created_at
+                    ? new Date(item.created_at).toLocaleString()
+                    : '';
+
+                  return `
+                    <div class="tracking-history-item">
+                      <strong>${label}</strong>
+                      ${date ? `<span>${date}</span>` : ''}
+                      ${item.note ? `<p>${item.note}</p>` : ''}
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          `
+          : '';
+
         result.innerHTML = `
           <strong>Service Request #${data.request_id}</strong><br>
           <strong>Service:</strong> ${data.service_name || 'Unknown'}<br>
           <strong>Status:</strong> ${status}
+          ${historyHtml}
         `;
 
       } catch (error) {
@@ -505,6 +537,37 @@ if (trackOrderButton) {
           ? steps[currentIndex][1]
           : data.status || 'Unknown';
 
+      const history = Array.isArray(data.history)
+        ? data.history
+        : [];
+
+      const historyHtml = history.length
+        ? `
+          <div class="tracking-history">
+            <h4>Status history</h4>
+            <div class="tracking-history-list">
+              ${history.map(item => {
+                const label = String(item.status || 'Unknown')
+                  .replace(/_/g, ' ')
+                  .replace(/\b\w/g, c => c.toUpperCase());
+
+                const date = item.created_at
+                  ? new Date(item.created_at).toLocaleString()
+                  : '';
+
+                return `
+                  <div class="tracking-history-item">
+                    <strong>${label}</strong>
+                    ${date ? `<span>${date}</span>` : ''}
+                    ${item.note ? `<p>${item.note}</p>` : ''}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `
+        : '';
+
       result.innerHTML = `
         <strong>Order #${data.order_id}</strong>
 
@@ -515,6 +578,8 @@ if (trackOrderButton) {
         <div class="tracking-steps">
           ${timeline}
         </div>
+
+        ${historyHtml}
 
         <div class="tracking-payment">
           <strong>Payment:</strong>

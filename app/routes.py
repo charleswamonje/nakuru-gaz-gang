@@ -356,12 +356,30 @@ def order_status(order_id):
     order = db.session.get(Order, order_id)
     if order is None or order.phone != phone:
         return jsonify(error="Order not found."), 404
+    history = (
+        StatusHistory.query
+        .filter_by(entity_type="order", entity_id=order.id)
+        .order_by(StatusHistory.created_at.asc(), StatusHistory.id.asc())
+        .all()
+    )
+
     return jsonify(
         order_id=order.id,
         status=order.status,
         payment_status=order.payment_status,
         payment_method=order.payment_method,
         created_at=order.created_at.isoformat() if order.created_at else None,
+        history=[
+            {
+                "status": item.status,
+                "note": item.note,
+                "created_at": (
+                    item.created_at.isoformat()
+                    if item.created_at else None
+                )
+            }
+            for item in history
+        ],
     )
 
 
@@ -380,6 +398,16 @@ def service_request_status(request_id):
 
     service = db.session.get(Service, service_request.service_id)
 
+    history = (
+        StatusHistory.query
+        .filter_by(
+            entity_type="service_request",
+            entity_id=service_request.id
+        )
+        .order_by(StatusHistory.created_at.asc(), StatusHistory.id.asc())
+        .all()
+    )
+
     return jsonify(
         request_id=service_request.id,
         status=service_request.status,
@@ -387,7 +415,18 @@ def service_request_status(request_id):
         created_at=(
             service_request.created_at.isoformat()
             if service_request.created_at else None
-        )
+        ),
+        history=[
+            {
+                "status": item.status,
+                "note": item.note,
+                "created_at": (
+                    item.created_at.isoformat()
+                    if item.created_at else None
+                )
+            }
+            for item in history
+        ]
     )
 
 

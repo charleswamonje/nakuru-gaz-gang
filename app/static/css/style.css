@@ -343,3 +343,44 @@
   background: #fee2e2;
   color: #991b1b;
 }
+
+.tracking-history {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.tracking-history h4 {
+  margin: 0 0 10px;
+}
+
+.tracking-history-list {
+  display: grid;
+  gap: 8px;
+}
+
+.tracking-history-item {
+  padding: 10px;
+  border-left: 4px solid #17324d;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.tracking-history-item strong {
+  display: block;
+  text-transform: capitalize;
+}
+
+.tracking-history-item span {
+  display: block;
+  margin-top: 3px;
+  font-size: .78rem;
+  color: #64748b;
+}
+
+.tracking-history-item p {
+  margin: 5px 0 0;
+  font-size: .85rem;
+  color: #475569;
+}

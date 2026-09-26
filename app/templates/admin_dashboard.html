@@ -53,7 +53,10 @@ button{padding:10px 16px;font-family:inherit;font-weight:bold;cursor:pointer}
 <a class="tool" href="/admin/payments">PAYMENTS</a>
 <a class="tool" href="#">CUSTOMERS</a>
 <a class="tool" href="{{ url_for('main.admin_service_requests') }}">SERVICE REQUESTS</a>
-<a class="tool" href="#">BUSINESS SETTINGS</a>
+<a class="tool"
+   href="{{ url_for('main.admin_business_settings') }}">
+    BUSINESS SETTINGS
+</a>
 </div>
 </div>
 

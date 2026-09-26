@@ -1008,3 +1008,66 @@ def admin_service_toggle(service_id):
     service.active = not service.active
     db.session.commit()
     return redirect(url_for("main.admin_services"))
+
+
+@main.get("/admin/business-settings")
+def admin_business_settings():
+    if not session.get("admin"):
+        abort(403)
+
+    keys = [
+        "business_name",
+        "customer_care_phone",
+        "business_email",
+        "whatsapp_number",
+        "business_location",
+        "business_tagline",
+        "business_mission",
+        "business_vision",
+    ]
+
+    settings = {}
+
+    for key in keys:
+        setting = BusinessSetting.query.filter_by(key=key).first()
+        settings[key] = setting.value if setting else ""
+
+    return render_template(
+        "admin_business_settings.html",
+        settings=settings
+    )
+
+
+@main.post("/admin/business-settings")
+def save_business_settings():
+    if not session.get("admin"):
+        abort(403)
+
+    fields = {
+        "business_name": 160,
+        "customer_care_phone": 30,
+        "business_email": 320,
+        "whatsapp_number": 30,
+        "business_location": 160,
+        "business_tagline": 300,
+        "business_mission": 500,
+        "business_vision": 500,
+    }
+
+    for key, limit in fields.items():
+        value = clean_text(request.form.get(key), limit)
+
+        setting = BusinessSetting.query.filter_by(key=key).first()
+
+        if setting is None:
+            setting = BusinessSetting(
+                key=key,
+                value=value
+            )
+            db.session.add(setting)
+        else:
+            setting.value = value
+
+    db.session.commit()
+
+    return redirect(url_for("main.admin_business_settings"))

@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>Business Settings | Muiruri Gas Delivery</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<header class="site-header">
+
+    <a class="brand" href="{{ url_for('main.admin') }}">
+        MUIRURI GAS DELIVERY
+    </a>
+
+    <nav>
+        <a class="linkbutton"
+           href="{{ url_for('main.admin') }}">
+            ADMIN DASHBOARD
+        </a>
+
+        <a class="linkbutton"
+           href="{{ url_for('main.admin_payments') }}">
+            PAYMENTS
+        </a>
+
+        <a class="linkbutton"
+           href="{{ url_for('main.index') }}">
+            WEBSITE
+        </a>
+    </nav>
+
+</header>
+
+
+<main>
+
+<section class="hero">
+
+    <p class="eyebrow">ADMINISTRATION</p>
+
+    <h1>BUSINESS SETTINGS</h1>
+
+    <p class="hero-text">
+        Manage the business information used by the website.
+    </p>
+
+</section>
+
+
+<section class="account-section">
+
+<form method="post">
+
+    <input type="hidden"
+           name="csrf_token"
+           value="{{ csrf_token() }}">
+
+
+    <div class="card">
+
+        <h2>BUSINESS INFORMATION</h2>
+
+        <label for="business_name">
+            Business name
+        </label>
+
+        <input
+            id="business_name"
+            name="business_name"
+            type="text"
+            maxlength="160"
+            value="{{ settings.business_name }}"
+            required
+        >
+
+
+        <label for="business_location">
+            Business location
+        </label>
+
+        <input
+            id="business_location"
+            name="business_location"
+            type="text"
+            maxlength="160"
+            value="{{ settings.business_location }}"
+            placeholder="Nakuru, Kenya"
+        >
+
+
+        <label for="business_tagline">
+            Tagline
+        </label>
+
+        <input
+            id="business_tagline"
+            name="business_tagline"
+            type="text"
+            maxlength="300"
+            value="{{ settings.business_tagline }}"
+        >
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>CUSTOMER CARE</h2>
+
+        <label for="customer_care_phone">
+            Customer-care phone
+        </label>
+
+        <input
+            id="customer_care_phone"
+            name="customer_care_phone"
+            type="text"
+            maxlength="30"
+            value="{{ settings.customer_care_phone }}"
+            required
+        >
+
+
+        <label for="whatsapp_number">
+            WhatsApp number
+        </label>
+
+        <input
+            id="whatsapp_number"
+            name="whatsapp_number"
+            type="text"
+            maxlength="30"
+            value="{{ settings.whatsapp_number }}"
+        >
+
+
+        <label for="business_email">
+            Business email
+        </label>
+
+        <input
+            id="business_email"
+            name="business_email"
+            type="email"
+            maxlength="320"
+            value="{{ settings.business_email }}"
+        >
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>BUSINESS MESSAGE</h2>
+
+        <label for="business_vision">
+            Vision
+        </label>
+
+        <textarea
+            id="business_vision"
+            name="business_vision"
+            maxlength="500"
+            rows="3"
+        >{{ settings.business_vision }}</textarea>
+
+
+        <label for="business_mission">
+            Mission
+        </label>
+
+        <textarea
+            id="business_mission"
+            name="business_mission"
+            maxlength="500"
+            rows="4"
+        >{{ settings.business_mission }}</textarea>
+
+    </div>
+
+
+    <div class="hero-actions">
+
+        <button type="submit">
+            SAVE BUSINESS SETTINGS
+        </button>
+
+        <a class="linkbutton"
+           href="{{ url_for('main.admin') }}">
+            CANCEL
+        </a>
+
+    </div>
+
+</form>
+
+</section>
+
+</main>
+
+<footer>
+    <p>
+        Muiruri Gas Delivery — Administration
+    </p>
+</footer>
+
+</body>
+</html>

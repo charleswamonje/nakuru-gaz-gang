@@ -410,3 +410,54 @@ if (trackOrderButton) {
     }
   });
 }
+
+/* ================= PRODUCT IMAGE VIEWER ================= */
+
+(function () {
+  const viewer = document.getElementById('product-image-viewer');
+  const largeImage = document.getElementById('product-image-large');
+  const imageName = document.getElementById('product-image-name');
+  const download = document.getElementById('product-image-download');
+  const closeTop = document.getElementById('product-image-close');
+  const closeBottom = document.getElementById('product-image-close-bottom');
+
+  if (!viewer || !largeImage || !download) return;
+
+  function closeViewer() {
+    viewer.hidden = true;
+    largeImage.src = '';
+    largeImage.alt = '';
+    imageName.textContent = '';
+    download.href = '#';
+  }
+
+  document.querySelectorAll('.product-image-button').forEach(button => {
+    button.addEventListener('click', () => {
+      const src = button.dataset.productImage;
+      const name = button.dataset.productName || 'Product image';
+
+      if (!src) return;
+
+      largeImage.src = src;
+      largeImage.alt = name;
+      imageName.textContent = name;
+      download.href = src;
+      download.setAttribute('download', name.replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '.jpg');
+
+      viewer.hidden = false;
+    });
+  });
+
+  closeTop.addEventListener('click', closeViewer);
+  closeBottom.addEventListener('click', closeViewer);
+
+  viewer.addEventListener('click', event => {
+    if (event.target === viewer) closeViewer();
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !viewer.hidden) {
+      closeViewer();
+    }
+  });
+})();

@@ -248,20 +248,31 @@
 
         <article class="card product-card">
 
-            {% if p.image_url %}
-
             <div class="product-image-wrap">
 
-                <img
-                    class="product-image"
-                    src="{{ p.image_url }}"
-                    alt="{{ p.name }}"
-                    loading="lazy"
+                {% if p.image_url %}
+                <button
+                    type="button"
+                    class="product-image-button"
+                    data-product-image="{{ p.image_url }}"
+                    data-product-name="{{ p.name }}"
+                    aria-label="View {{ p.name }} image"
                 >
+                    <img
+                        class="product-image"
+                        src="{{ p.image_url }}"
+                        alt="{{ p.name }}"
+                        loading="lazy"
+                    >
+                </button>
+                {% else %}
+                <div class="product-image-placeholder">
+                    <span>PRODUCT IMAGE</span>
+                    <small>Image coming soon</small>
+                </div>
+                {% endif %}
 
             </div>
-
-            {% endif %}
 
 
             <div class="product-category">
@@ -775,6 +786,57 @@
 
 </footer>
 
+
+
+<!-- ================= PRODUCT IMAGE VIEWER ================= -->
+
+<div id="product-image-viewer" class="product-image-viewer" hidden>
+    <div class="product-image-viewer-panel">
+
+        <button
+            type="button"
+            id="product-image-close"
+            class="product-image-close"
+            aria-label="Close image viewer"
+        >
+            &times;
+        </button>
+
+        <img
+            id="product-image-large"
+            class="product-image-large"
+            src=""
+            alt=""
+        >
+
+        <div
+            id="product-image-name"
+            class="product-image-name"
+        ></div>
+
+        <div class="product-image-actions">
+
+            <a
+                id="product-image-download"
+                class="linkbutton"
+                href="#"
+                download
+            >
+                DOWNLOAD IMAGE
+            </a>
+
+            <button
+                type="button"
+                id="product-image-close-bottom"
+                class="linkbutton"
+            >
+                CLOSE
+            </button>
+
+        </div>
+
+    </div>
+</div>
 
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 

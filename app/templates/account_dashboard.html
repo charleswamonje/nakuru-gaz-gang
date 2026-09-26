@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>My Account | Muiruri Gas Delivery</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<header>
+    <div class="brand">
+        <strong>MUIRURI GAS DELIVERY</strong>
+    </div>
+
+    <div class="tagline">
+        RELIABLE ON TIME CLEAN AND STRONG.
+    </div>
+
+    <a class="phone" href="tel:0710525480">
+        0710525480
+    </a>
+</header>
+
+<main>
+
+<section class="hero">
+
+    <p class="eyebrow">CUSTOMER ACCOUNT</p>
+
+    <h1>
+        WELCOME BACK
+    </h1>
+
+    <p>
+        {{ user.email }}
+    </p>
+
+</section>
+
+
+<section class="grid">
+
+    <article class="card">
+        <h2>MY ORDERS</h2>
+
+        <p>
+            View your water and gas orders, order status,
+            payment status and delivery tracking.
+        </p>
+
+        <strong>{{ order_count }} order(s)</strong>
+
+        <div class="hero-actions">
+            <a class="linkbutton"
+               href="{{ url_for('main.account_orders') }}">
+                VIEW MY ORDERS
+            </a>
+        </div>
+    </article>
+
+
+    <article class="card">
+        <h2>MY SERVICE REQUESTS</h2>
+
+        <p>
+            Track technology, network and technical-support
+            requests submitted to Muiruri Gas Delivery.
+        </p>
+
+        <strong>{{ service_request_count }} request(s)</strong>
+
+        <div class="hero-actions">
+            <a class="linkbutton"
+               href="{{ url_for('main.account_service_requests') }}">
+                VIEW MY SERVICES
+            </a>
+        </div>
+    </article>
+
+
+    <article class="card">
+        <h2>NOTIFICATIONS</h2>
+
+        <p>
+            See updates about your orders and service requests.
+        </p>
+
+        <strong>{{ unread_notification_count }} unread</strong>
+
+        <div class="hero-actions">
+            <a class="linkbutton"
+               href="{{ url_for('main.account_notifications') }}">
+                VIEW NOTIFICATIONS
+            </a>
+        </div>
+    </article>
+
+</section>
+
+
+<section class="contact">
+
+    <p class="eyebrow">QUICK ACTIONS</p>
+
+    <h2>WHAT DO YOU NEED?</h2>
+
+    <div class="hero-actions">
+
+        <a class="linkbutton"
+           href="{{ url_for('main.index') }}#products">
+            ORDER WATER & GAS
+        </a>
+
+        <a class="linkbutton"
+           href="{{ url_for('main.index') }}#service-request">
+            REQUEST TECH SUPPORT
+        </a>
+
+        <a class="linkbutton"
+           href="{{ url_for('main.index') }}">
+            HOME
+        </a>
+
+    </div>
+
+</section>
+
+
+<section class="final-cta">
+
+    <p>
+        Need help with an order or service request?
+    </p>
+
+    <p>
+        <strong>Customer care: 0710525480</strong>
+    </p>
+
+    <div class="hero-actions">
+
+        <a class="linkbutton"
+           href="tel:0710525480">
+            CALL CUSTOMER CARE
+        </a>
+
+        <a class="linkbutton"
+           href="https://wa.me/254710525480"
+           target="_blank"
+           rel="noopener noreferrer">
+            WHATSAPP US
+        </a>
+
+    </div>
+
+</section>
+
+</main>
+
+<footer>
+    <p>
+        Muiruri Gas Delivery — Nakuru, Kenya
+    </p>
+</footer>
+
+</body>
+</html>

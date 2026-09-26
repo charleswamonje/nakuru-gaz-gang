@@ -136,6 +136,30 @@ def index():
     )
 
 
+@main.get("/account")
+def account_dashboard():
+    user = current_user()
+
+    if user is None:
+        return redirect(url_for("main.auth_page"))
+
+    order_count = Order.query.filter_by(user_id=user.id).count()
+    service_request_count = ServiceRequest.query.filter_by(user_id=user.id).count()
+    unread_notification_count = (
+        Notification.query
+        .filter_by(user_id=user.id, is_read=False)
+        .count()
+    )
+
+    return render_template(
+        "account_dashboard.html",
+        user=user,
+        order_count=order_count,
+        service_request_count=service_request_count,
+        unread_notification_count=unread_notification_count
+    )
+
+
 @main.get("/account/orders")
 def account_orders():
     user = current_user()

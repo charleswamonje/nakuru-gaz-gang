@@ -57,7 +57,7 @@
 
 <section class="account-section">
 
-<form method="post">
+<form method="post" action="{{ url_for('main.save_business_settings') }}">
 
     <input type="hidden"
            name="csrf_token"

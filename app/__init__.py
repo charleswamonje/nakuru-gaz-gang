@@ -16,7 +16,7 @@ load_dotenv()
 db = SQLAlchemy()
 csrf = CSRFProtect()
 compress = Compress()
-limiter = Limiter(key_func=get_remote_address, default_limits=["200 per day", "50 per hour"])
+limiter = Limiter(key_func=get_remote_address, default_limits=["200 per day", "50 per hour"], storage_uri=os.getenv("RATELIMIT_STORAGE_URI", "memory://"))
 
 
 def database_url():

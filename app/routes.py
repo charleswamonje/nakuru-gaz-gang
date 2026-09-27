@@ -545,6 +545,14 @@ def submit_payment_reference(order_id):
     order = db.session.get(Order, order_id)
     if order is None:
         return jsonify(error="Order not found."), 404
+
+    user = current_user()
+    if user is not None:
+        if order.user_id != user.id:
+            return jsonify(error="You cannot update this order."), 403
+    elif order.user_id is not None:
+        return jsonify(error="Authentication required for this order."), 401
+
     if order.phone != phone:
         return jsonify(error="The phone number does not match this order."), 403
     if order.payment_status == "paid":

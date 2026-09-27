@@ -752,6 +752,9 @@ def admin_update_order(order_id):
 
 @main.post("/admin/orders/<int:order_id>/mpesa")
 def initiate_mpesa_payment(order_id):
+    if not session.get("admin"):
+        abort(403)
+
     order = db.session.get(Order, order_id)
 
     if order is None:

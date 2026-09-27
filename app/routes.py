@@ -778,12 +778,6 @@ def initiate_mpesa_payment(order_id):
     if order is None:
         abort(404)
 
-    user = current_user()
-
-    if not session.get("admin"):
-        if user is None or order.user_id != user.id:
-            abort(403)
-
     if order.payment_status == "paid":
         return jsonify(error="Order is already marked as paid."), 400
 

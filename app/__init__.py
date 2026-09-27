@@ -102,7 +102,7 @@ def create_app():
             response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
             response.headers["Content-Security-Policy"] = (
                 "default-src 'self'; style-src 'self' 'unsafe-inline'; "
-                "script-src 'self'; img-src 'self' data:; frame-ancestors 'self'; "
+                "script-src 'self' 'sha256-nth7Pkc4a/ukyG9yKkS7yZxP3BvTwydZ2NFQiHfMiTs='; img-src 'self' data:; frame-ancestors 'self'; "
                 "base-uri 'self'; form-action 'self'; object-src 'none'"
             )
         # Static assets are immutable enough for short browser caching; HTML/API stays dynamic.

@@ -460,6 +460,11 @@ def order_status(order_id):
     order = db.session.get(Order, order_id)
     if order is None or order.phone != phone:
         return jsonify(error="Order not found."), 404
+
+    user = current_user()
+    if user is not None and order.user_id is not None and order.user_id != user.id:
+        return jsonify(error="Order not found."), 404
+
     history = (
         StatusHistory.query
         .filter_by(entity_type="order", entity_id=order.id)

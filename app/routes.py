@@ -849,7 +849,6 @@ def admin_sales():
         abort(403)
 
     orders = Order.query.order_by(Order.created_at.desc()).all()
-    pending_orders = [o for o in orders if o.payment_status == "pending" and o.payment_reference]
 
     paid_orders = [o for o in orders if o.payment_status == "paid"]
     pending_orders = [o for o in orders if o.payment_status == "pending"]

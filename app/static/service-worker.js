@@ -7,7 +7,8 @@ const APP_SHELL = [
   '/static/js/app.js',
   '/static/icons/icon-192.png',
   '/static/icons/icon-512.png',
-  '/static/favicon.ico'
+  '/static/favicon.ico',
+  '/static/offline.html'
 ];
 
 self.addEventListener('install', event => {
@@ -52,6 +53,18 @@ self.addEventListener('fetch', event => {
         }
         return response;
       })
-      .catch(() => caches.match(event.request))
+      .catch(() =>
+        caches.match(event.request).then(cached => {
+          if (cached) {
+            return cached;
+          }
+
+          if (event.request.mode === 'navigate') {
+            return caches.match('/static/offline.html');
+          }
+
+          return Response.error();
+        })
+      )
   );
 });

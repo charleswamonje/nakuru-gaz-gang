@@ -738,7 +738,36 @@ def admin_update_order(order_id):
     if order is None:
         abort(404)
 
-    new_status = request.form.get("status", order.status)
+    allowed_statuses = {
+        "received",
+        "confirmed",
+        "preparing",
+        "out_for_delivery",
+        "delivered",
+        "cancelled",
+    }
+    allowed_payment_statuses = {"pending", "paid", "failed"}
+    allowed_payment_methods = {"", "mpesa", "cash", "paypal"}
+
+    new_status = clean_text(request.form.get("status", order.status), 40)
+    new_payment_status = clean_text(
+        request.form.get("payment_status", order.payment_status), 40
+    )
+    new_payment_method = clean_text(
+        request.form.get("payment_method", order.payment_method), 40
+    )
+    new_payment_reference = clean_text(
+        request.form.get("payment_reference", order.payment_reference), 120
+    )
+
+    if new_status not in allowed_statuses:
+        abort(400)
+
+    if new_payment_status not in allowed_payment_statuses:
+        abort(400)
+
+    if new_payment_method not in allowed_payment_methods:
+        abort(400)
 
     if new_status != order.status:
         db.session.add(

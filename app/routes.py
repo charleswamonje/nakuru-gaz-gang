@@ -688,6 +688,7 @@ def admin_login():
     if configured_password and data.get("username") == current_app.config["ADMIN_USERNAME"] and data.get("password") == configured_password:
         session.clear()
         session["admin"] = True
+        session.permanent = True
         return "Logged in"
     abort(401)
 

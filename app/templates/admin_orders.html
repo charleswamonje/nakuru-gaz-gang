@@ -92,11 +92,12 @@
 
             {% if row.items %}
                 <ul>
-                {% for item in row['items'] %}
+                {% for row_item in row['items'] %}
                     <li>
-                        Product ID {{ item.product_id }}
-                        — Quantity: {{ item.quantity }}
-                        — Unit price: KSh {{ item.unit_price }}
+                        <strong>{{ row_item.product_name }}</strong>
+                        — Quantity: {{ row_item.item.quantity }}
+                        — Unit price: KSh {{ row_item.item.unit_price }}
+                        — Line total: KSh {{ row_item.line_total }}
                     </li>
                 {% endfor %}
                 </ul>

@@ -692,9 +692,19 @@ def admin_orders():
 
     for order in orders:
         items = OrderItem.query.filter_by(order_id=order.id).all()
+        item_rows = []
+
+        for item in items:
+            product = db.session.get(Product, item.product_id)
+            item_rows.append({
+                "item": item,
+                "product_name": product.name if product else f"Product #{item.product_id}",
+                "line_total": item.quantity * item.unit_price,
+            })
+
         order_rows.append({
             "order": order,
-            "items": items
+            "items": item_rows
         })
 
     return render_template("admin_orders.html", order_rows=order_rows)

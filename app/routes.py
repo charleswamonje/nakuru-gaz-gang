@@ -505,6 +505,10 @@ def service_request_status(request_id):
     if service_request is None or service_request.phone != phone:
         return jsonify(error="Service request not found."), 404
 
+    user = current_user()
+    if user is not None and service_request.user_id is not None and service_request.user_id != user.id:
+        return jsonify(error="Service request not found."), 404
+
     service = db.session.get(Service, service_request.service_id)
 
     history = (

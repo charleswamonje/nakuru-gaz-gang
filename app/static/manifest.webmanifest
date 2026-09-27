@@ -1,0 +1,10 @@
+{
+  "name": "Muiruri Gas Delivery",
+  "short_name": "Muiruri Gas",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b1020",
+  "theme_color": "#0b1020",
+  "description": "Reliable water, gas delivery and technical services in Nakuru.",
+  "icons": []
+}

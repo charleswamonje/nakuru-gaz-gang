@@ -695,7 +695,7 @@ def admin_login():
 
 @main.post("/admin/logout")
 def admin_logout():
-    session.pop("admin", None)
+    session.clear()
     return "Logged out"
 
 

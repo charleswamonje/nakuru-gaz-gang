@@ -1002,17 +1002,7 @@
 
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register(
-            "{{ url_for('static', filename='service-worker.js') }}"
-        ).catch(error => {
-            console.error('Service worker registration failed:', error);
-        });
-    });
-}
-</script>
+
 
 </body>
 </html>

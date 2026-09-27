@@ -655,3 +655,13 @@ if (trackOrderButton) {
     }
   });
 })();
+
+/* ================= PWA SERVICE WORKER ================= */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/static/service-worker.js')
+      .catch(error => {
+        console.error('Service worker registration failed:', error);
+      });
+  });
+}

@@ -789,9 +789,9 @@ def admin_update_order(order_id):
             )
 
     order.status = new_status
-    order.payment_status = request.form.get("payment_status", order.payment_status)
-    order.payment_method = request.form.get("payment_method", order.payment_method)
-    order.payment_reference = request.form.get("payment_reference", order.payment_reference)
+    order.payment_status = new_payment_status
+    order.payment_method = new_payment_method
+    order.payment_reference = new_payment_reference
 
     db.session.commit()
 

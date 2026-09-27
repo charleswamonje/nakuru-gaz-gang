@@ -129,7 +129,7 @@ def index():
     mpesa_till = till_setting.value if till_setting else ""
 
     business_defaults = {
-        "business_name": "MUIRURI GAS DELIVERY",
+        "business_name": "DANSTAR GAS DELIVERY",
         "customer_care_phone": "0710525480",
         "business_email": "redgroup@gmail.com",
         "whatsapp_number": "254710525480",

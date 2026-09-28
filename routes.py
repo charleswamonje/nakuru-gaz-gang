@@ -525,6 +525,40 @@ def admin_logout():
     session.pop("admin", None); return "Logged out"
 
 
+@main.post("/admin/orders/<int:order_id>/status")
+def admin_update_order_status(order_id):
+    if not session.get("admin"):
+        abort(403)
+
+    data = request.get_json(silent=True) or {}
+    new_status = str(data.get("status", "")).strip()
+
+    allowed = {
+        "received",
+        "confirmed",
+        "processing",
+        "out_for_delivery",
+        "delivered",
+        "cancelled",
+    }
+
+    if new_status not in allowed:
+        return jsonify(error="Invalid order status."), 400
+
+    order = db.session.get(Order, order_id)
+    if not order:
+        return jsonify(error="Order not found."), 404
+
+    order.status = new_status
+    db.session.commit()
+
+    return jsonify(
+        message="Order status updated.",
+        order_id=order.id,
+        status=order.status,
+    )
+
+
 @main.get("/admin")
 def admin():
     if not session.get("admin"): abort(403)

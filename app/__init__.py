@@ -111,6 +111,7 @@ def create_app():
         return response
 
     @app.get("/healthz")
+    @limiter.exempt
     def healthz():
         return {"status": "ok"}, 200
 

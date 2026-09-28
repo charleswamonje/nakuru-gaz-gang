@@ -1070,3 +1070,174 @@ section{
     }
 }
 
+
+/* =========================================================
+   DANSTAR LIGHT FUTURISTIC CUSTOMER THEME
+   Keep the futuristic design, improve readability
+   ========================================================= */
+
+body{
+    color:#172033;
+    background:
+        radial-gradient(circle at 10% 5%,rgba(34,211,238,.16),transparent 25%),
+        radial-gradient(circle at 90% 15%,rgba(129,140,248,.14),transparent 28%),
+        linear-gradient(145deg,#f8fafc,#eef4f8 55%,#f5f7fb);
+}
+
+/* Main sections */
+.hero,
+.panel,
+.values>div,
+.card,
+.contact{
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.96),
+            rgba(241,247,251,.94)
+        );
+    color:#172033;
+    border:1px solid rgba(34,211,238,.22);
+    box-shadow:
+        0 8px 30px rgba(15,23,42,.08),
+        0 0 20px rgba(34,211,238,.06);
+}
+
+/* Hero gets a stronger futuristic identity */
+.hero{
+    background:
+        radial-gradient(circle at 85% 20%,rgba(34,211,238,.16),transparent 30%),
+        radial-gradient(circle at 15% 80%,rgba(129,140,248,.13),transparent 30%),
+        linear-gradient(145deg,#ffffff,#edf7fb);
+    border:1px solid rgba(34,211,238,.30);
+    box-shadow:
+        0 12px 40px rgba(15,23,42,.10),
+        0 0 35px rgba(34,211,238,.10);
+}
+
+/* Main headings */
+.hero h1,
+.panel h2,
+.values h2{
+    color:#0f2742;
+}
+
+/* Normal text */
+.hero-text,
+.panel p,
+.values p,
+.card p,
+.contact p{
+    color:#475569;
+}
+
+/* Eyebrows / futuristic labels */
+.eyebrow{
+    color:#0284c7;
+    font-weight:800;
+    letter-spacing:.12em;
+}
+
+/* Service and product cards */
+.card{
+    position:relative;
+    overflow:hidden;
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease,
+        border-color .3s ease;
+}
+
+/* Moving shine across cards */
+.card:after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-120%;
+    width:55%;
+    height:100%;
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.65),
+        transparent
+    );
+    transform:skewX(-18deg);
+    transition:left .7s ease;
+    pointer-events:none;
+}
+
+/* Shine appears when customer hovers */
+.card:hover:after{
+    left:140%;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+    border-color:rgba(34,211,238,.55);
+    box-shadow:
+        0 16px 35px rgba(15,23,42,.12),
+        0 0 28px rgba(34,211,238,.16);
+}
+
+/* Feature number */
+.feature-number{
+    color:#0284c7;
+    font-weight:900;
+}
+
+/* Product images */
+.product-image{
+    background:
+        linear-gradient(145deg,#f8fafc,#eaf4f8);
+    border:1px solid rgba(34,211,238,.18);
+    box-shadow:0 5px 18px rgba(15,23,42,.06);
+}
+
+/* Buttons remain futuristic */
+button{
+    background:linear-gradient(135deg,#0369a1,#0e7490);
+    box-shadow:
+        0 5px 16px rgba(3,105,161,.20),
+        0 0 14px rgba(34,211,238,.10);
+}
+
+button:hover{
+    box-shadow:
+        0 8px 24px rgba(3,105,161,.28),
+        0 0 22px rgba(34,211,238,.20);
+}
+
+.linkbutton{
+    color:#0369a1;
+    font-weight:800;
+}
+
+/* Hero status */
+.hero-status{
+    color:#334155;
+}
+
+.hero-status span{
+    color:#0891b2;
+}
+
+/* Mobile readability */
+@media(max-width:650px){
+    body{
+        background:
+            radial-gradient(circle at 50% 0%,rgba(34,211,238,.12),transparent 30%),
+            linear-gradient(145deg,#f8fafc,#eef4f8);
+    }
+
+    .hero,
+    .panel,
+    .values>div,
+    .card,
+    .contact{
+        box-shadow:
+            0 6px 22px rgba(15,23,42,.08),
+            0 0 15px rgba(34,211,238,.05);
+    }
+}
+

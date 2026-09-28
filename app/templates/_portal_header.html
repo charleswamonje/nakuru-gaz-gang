@@ -1,0 +1,57 @@
+<header class="portal-header">
+    <div class="portal-brand">
+        <a href="{{ url_for("main.index") }}" class="portal-brand-link">
+            <span class="redgroup-mark" title="Redgroup">RG</span>
+            <span class="portal-brand-name">DANSTAR</span>
+            <span class="portal-brand-sub">GAS DELIVERY</span>
+        </a>
+    </div>
+    <button type="button" class="portal-menu-toggle" id="portalMenuToggle" aria-label="Open navigation" aria-expanded="false">
+        MENU
+    </button>
+
+    <nav class="portal-nav" id="portalNav">
+        <a href="{{ url_for('main.index') }}">HOME</a>
+        <a href="{{ url_for('main.index') }}#products">PRODUCTS</a>
+        <a href="{{ url_for('main.index') }}#services">SERVICES</a>
+        {% if user %}
+        <a href="{{ url_for('main.account_orders') }}">MY ORDERS</a>
+        <a href="{{ url_for('main.account_service_requests') }}">MY SERVICES</a>
+        <a href="{{ url_for('main.account_notifications') }}">NOTIFICATIONS</a>
+        {% endif %}
+        <a href="{{ url_for('main.index') }}#help-support">HELP & SUPPORT</a>
+        <a href="{{ url_for('main.index') }}#about">ABOUT</a>
+    </nav>
+
+<div class="portal-actions">
+    <button type="button" class="portal-search-button" id="portalSearchButton" aria-label="Search">
+        SEARCH
+    </button>
+
+    <a class="portal-account-button" href="{{ url_for('main.account') if user else url_for('main.auth_page') }}">
+        {{ 'ACCOUNT' if user else 'SIGN IN' }}
+    </a>
+
+    <a class="portal-phone" href="tel:{{ business.customer_care_phone if business else '0710525480' }}">
+        {{ business.customer_care_phone if business else '0710525480' }}
+    </a>
+</div>
+</header>
+
+<div class="portal-search-panel" id="portalSearchPanel" hidden>
+    <div class="portal-search-inner">
+        <label for="portalSearchInput">SEARCH DANSTAR</label>
+
+        <div class="portal-search-box">
+            <input
+                type="search"
+                id="portalSearchInput"
+                placeholder="Search gas, water, Wi-Fi, computer support..."
+                autocomplete="off"
+            >
+            <button type="button" id="portalSearchClose">CLOSE</button>
+        </div>
+
+        <div id="portalSearchResults" class="portal-search-results"></div>
+    </div>
+</div>

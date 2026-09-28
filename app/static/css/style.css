@@ -384,3 +384,236 @@
   font-size: .85rem;
   color: #475569;
 }
+
+/* =========================
+   DANSTAR PORTAL HEADER
+   ========================= */
+
+.portal-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    min-height: 72px;
+    padding: 10px 24px;
+    background: rgba(7, 12, 24, .96);
+    border-bottom: 1px solid rgba(80, 180, 255, .22);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, .28);
+    backdrop-filter: blur(14px);
+}
+
+.portal-brand {
+    flex: 0 0 auto;
+}
+
+.portal-brand-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.redgroup-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #4db8ff;
+    border-radius: 50%;
+    color: #4db8ff;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .04em;
+}
+
+.portal-brand-name {
+    font-size: 1.05rem;
+    font-weight: 900;
+    letter-spacing: .16em;
+}
+
+.portal-brand-sub {
+    font-size: .62rem;
+    letter-spacing: .12em;
+    opacity: .62;
+    margin-left: 2px;
+}
+
+.portal-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    flex: 1 1 auto;
+}
+
+.portal-nav a,
+.portal-account-button,
+.portal-phone,
+.portal-search-button {
+    border: 1px solid transparent;
+    border-radius: 7px;
+    padding: 9px 11px;
+    color: inherit;
+    text-decoration: none;
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    background: transparent;
+    transition: .2s ease;
+}
+
+.portal-nav a:hover,
+.portal-account-button:hover,
+.portal-phone:hover,
+.portal-search-button:hover {
+    border-color: rgba(77, 184, 255, .42);
+    background: rgba(77, 184, 255, .09);
+    color: #ffffff;
+}
+
+.portal-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex: 0 0 auto;
+}
+
+.portal-search-button {
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.portal-menu-toggle {
+    display: none;
+    border: 1px solid rgba(77, 184, 255, .35);
+    border-radius: 7px;
+    padding: 9px 12px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    cursor: pointer;
+}
+
+.portal-search-panel {
+    position: fixed;
+    inset: 72px 0 auto 0;
+    z-index: 999;
+    padding: 18px 24px 22px;
+    background: rgba(7, 12, 24, .98);
+    border-bottom: 1px solid rgba(77, 184, 255, .25);
+    box-shadow: 0 16px 35px rgba(0, 0, 0, .32);
+}
+
+.portal-search-inner {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.portal-search-inner label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: .7rem;
+    font-weight: 900;
+    letter-spacing: .14em;
+}
+
+.portal-search-box {
+    display: flex;
+    gap: 8px;
+}
+
+.portal-search-box input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 14px;
+    border: 1px solid rgba(77, 184, 255, .3);
+    border-radius: 7px;
+    background: rgba(255, 255, 255, .05);
+    color: inherit;
+    font: inherit;
+}
+
+.portal-search-box button {
+    padding: 12px 15px;
+    border: 1px solid rgba(77, 184, 255, .35);
+    border-radius: 7px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: .7rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    cursor: pointer;
+}
+
+@media (max-width: 980px) {
+    .portal-header {
+        gap: 10px;
+        padding: 9px 14px;
+    }
+
+    .portal-brand-sub,
+    .portal-phone {
+        display: none;
+    }
+
+    .portal-nav {
+        gap: 1px;
+    }
+
+    .portal-nav a {
+        padding: 8px 7px;
+        font-size: .65rem;
+    }
+}
+
+@media (max-width: 760px) {
+    .portal-header {
+        flex-wrap: wrap;
+        min-height: 60px;
+    }
+
+    .portal-menu-toggle {
+        display: block;
+        margin-left: auto;
+    }
+
+    .portal-actions {
+        order: 3;
+    }
+
+    .portal-nav {
+        display: none;
+        order: 4;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        padding-top: 8px;
+        border-top: 1px solid rgba(77, 184, 255, .16);
+    }
+
+    .portal-nav.is-open {
+        display: flex;
+    }
+
+    .portal-nav a {
+        padding: 11px 10px;
+    }
+
+    .portal-search-panel {
+        inset: 60px 0 auto 0;
+        padding: 14px;
+    }
+
+    .portal-search-box {
+        flex-direction: column;
+    }
+}

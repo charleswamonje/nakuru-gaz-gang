@@ -676,3 +676,60 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
+
+/* ================= DANSTAR PORTAL CONTROLS ================= */
+
+(function () {
+  const menuToggle = document.getElementById('portalMenuToggle');
+  const nav = document.getElementById('portalNav');
+
+  if (menuToggle && nav) {
+    menuToggle.addEventListener('click', () => {
+      const open = nav.classList.toggle('is-open');
+      menuToggle.setAttribute('aria-expanded', String(open));
+    });
+
+    nav.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        nav.classList.remove('is-open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+
+  const searchButton = document.getElementById('portalSearchButton');
+  const searchPanel = document.getElementById('portalSearchPanel');
+  const searchClose = document.getElementById('portalSearchClose');
+  const searchInput = document.getElementById('portalSearchInput');
+
+  if (!searchButton || !searchPanel) return;
+
+  function openSearch() {
+    searchPanel.hidden = false;
+    if (searchInput) {
+      searchInput.focus();
+    }
+  }
+
+  function closeSearch() {
+    searchPanel.hidden = true;
+  }
+
+  searchButton.addEventListener('click', () => {
+    if (searchPanel.hidden) {
+      openSearch();
+    } else {
+      closeSearch();
+    }
+  });
+
+  if (searchClose) {
+    searchClose.addEventListener('click', closeSearch);
+  }
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      closeSearch();
+    }
+  });
+})();

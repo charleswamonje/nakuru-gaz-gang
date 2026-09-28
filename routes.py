@@ -1,6 +1,7 @@
 from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal
-import hashlib, secrets, smtplib
+import hashlib, secrets, smtplib, base64, json, re
+import requests
 from email.message import EmailMessage
 from flask import Blueprint, current_app, jsonify, render_template, request, session, abort, redirect, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -160,29 +161,306 @@ def reset_password(token):
     return jsonify(message="Password changed. You can now sign in.")
 
 
+
+def normalize_mpesa_phone(phone):
+    digits = re.sub(r"\D", "", str(phone or ""))
+    if digits.startswith("254") and len(digits) == 12:
+        return digits
+    if digits.startswith("07") and len(digits) == 10:
+        return "254" + digits[1:]
+    if digits.startswith("01") and len(digits) == 10:
+        return "254" + digits[1:]
+    if digits.startswith("7") and len(digits) == 9:
+        return "254" + digits
+    if digits.startswith("1") and len(digits) == 9:
+        return "254" + digits
+    return None
+
+
+def mpesa_access_token():
+    env = current_app.config.get("MPESA_ENV", "sandbox").lower()
+    base = (
+        "https://api.safaricom.co.ke"
+        if env == "production"
+        else "https://sandbox.safaricom.co.ke"
+    )
+
+    key = current_app.config.get("MPESA_CONSUMER_KEY")
+    secret = current_app.config.get("MPESA_CONSUMER_SECRET")
+
+    if not key or not secret:
+        raise RuntimeError("M-Pesa credentials are not configured.")
+
+    response = requests.get(
+        base + "/oauth/v1/generate",
+        params={"grant_type": "client_credentials"},
+        auth=(key, secret),
+        timeout=20,
+    )
+    response.raise_for_status()
+    return response.json()["access_token"]
+
+
+def mpesa_password(timestamp):
+    shortcode = current_app.config.get("MPESA_SHORTCODE")
+    passkey = current_app.config.get("MPESA_PASSKEY")
+
+    if not shortcode or not passkey:
+        raise RuntimeError("M-Pesa shortcode/passkey are not configured.")
+
+    raw = f"{shortcode}{passkey}{timestamp}".encode()
+    return base64.b64encode(raw).decode()
+
+
+def initiate_mpesa_stk(order):
+    phone = normalize_mpesa_phone(order.phone)
+    if not phone:
+        raise ValueError("Enter a valid Kenyan M-Pesa phone number.")
+
+    amount = int(Decimal(str(order.total)))
+    if amount < 1:
+        raise ValueError("This order has no payable amount yet.")
+
+    shortcode = current_app.config.get("MPESA_SHORTCODE")
+    callback_url = current_app.config.get("MPESA_CALLBACK_URL")
+
+    if not shortcode:
+        raise RuntimeError("M-Pesa shortcode is not configured.")
+    if not callback_url:
+        raise RuntimeError("MPESA_CALLBACK_URL is not configured.")
+
+    now = datetime.now(timezone.utc)
+    timestamp = now.strftime("%Y%m%d%H%M%S")
+
+    env = current_app.config.get("MPESA_ENV", "sandbox").lower()
+    base = (
+        "https://api.safaricom.co.ke"
+        if env == "production"
+        else "https://sandbox.safaricom.co.ke"
+    )
+
+    payload = {
+        "BusinessShortCode": shortcode,
+        "Password": mpesa_password(timestamp),
+        "Timestamp": timestamp,
+        "TransactionType": "CustomerPayBillOnline",
+        "Amount": amount,
+        "PartyA": phone,
+        "PartyB": shortcode,
+        "PhoneNumber": phone,
+        "CallBackURL": callback_url,
+        "AccountReference": f"ORDER-{order.id}",
+        "TransactionDesc": f"Danstar Gas Order {order.id}",
+    }
+
+    token = mpesa_access_token()
+
+    response = requests.post(
+        base + "/mpesa/stkpush/v1/processrequest",
+        json=payload,
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+        },
+        timeout=30,
+    )
+
+    try:
+        data = response.json()
+    except ValueError:
+        data = {}
+
+    if not response.ok:
+        raise RuntimeError(
+            data.get("errorMessage")
+            or data.get("errorCode")
+            or "M-Pesa request failed."
+        )
+
+    return data
+
+
 @main.post("/api/orders")
 @limiter.limit("10 per minute")
 def create_order():
     data = request.get_json(silent=True) or {}
-    name, phone, area = str(data.get("customer_name", "")).strip(), str(data.get("phone", "")).strip(), str(data.get("delivery_area", "")).strip()
+
+    name = str(data.get("customer_name", "")).strip()
+    phone = str(data.get("phone", "")).strip()
+    area = str(data.get("delivery_area", "")).strip()
     items = data.get("items", [])
+
     if not name or not phone or not area or not isinstance(items, list) or len(items) > 30:
         return jsonify(error="Please provide valid customer details and items."), 400
-    total = Decimal("0"); clean = []
+
+    total = Decimal("0")
+    clean = []
+
     for item in items:
-        try: pid, qty = int(item["product_id"]), int(item["quantity"])
-        except (KeyError, ValueError, TypeError): return jsonify(error="Invalid item."), 400
-        if qty < 1 or qty > 50: return jsonify(error="Quantity must be between 1 and 50."), 400
+        try:
+            pid = int(item["product_id"])
+            qty = int(item["quantity"])
+        except (KeyError, ValueError, TypeError):
+            return jsonify(error="Invalid item."), 400
+
+        if qty < 1 or qty > 50:
+            return jsonify(error="Quantity must be between 1 and 50."), 400
+
         product = db.session.get(Product, pid)
-        if not product or not product.active: return jsonify(error="Product unavailable."), 400
-        total += Decimal(str(product.price)) * qty; clean.append((product, qty))
-    if not clean: return jsonify(error="Your order is empty."), 400
+
+        if not product or not product.active:
+            return jsonify(error="Product unavailable."), 400
+
+        total += Decimal(str(product.price)) * qty
+        clean.append((product, qty))
+
+    if not clean:
+        return jsonify(error="Your order is empty."), 400
+
     user = current_user()
-    order = Order(customer_name=name[:120], phone=phone[:30], delivery_area=area[:160], notes=str(data.get("notes", ""))[:1000], total=total, user_id=user.id if user else None)
-    db.session.add(order); db.session.flush()
-    for product, qty in clean: db.session.add(OrderItem(order_id=order.id, product_id=product.id, quantity=qty, unit_price=product.price))
+
+    order = Order(
+        customer_name=name[:120],
+        phone=phone[:30],
+        delivery_area=area[:160],
+        notes=str(data.get("notes", ""))[:1000],
+        total=total,
+        payment_phone=normalize_mpesa_phone(phone),
+        user_id=user.id if user else None,
+    )
+
+    db.session.add(order)
+    db.session.flush()
+
+    for product, qty in clean:
+        db.session.add(
+            OrderItem(
+                order_id=order.id,
+                product_id=product.id,
+                quantity=qty,
+                unit_price=product.price,
+            )
+        )
+
     db.session.commit()
-    return jsonify(message="Order received.", order_id=order.id, payment_number="0710525480")
+
+    # Automatically start M-Pesa for orders with a payable total.
+    if total > 0:
+        try:
+            mpesa = initiate_mpesa_stk(order)
+
+            order.payment_status = "prompt_sent"
+            order.mpesa_checkout_request_id = mpesa.get("CheckoutRequestID")
+            order.mpesa_merchant_request_id = mpesa.get("MerchantRequestID")
+            order.mpesa_result_code = str(mpesa.get("ResponseCode", ""))
+            order.mpesa_result_desc = mpesa.get("ResponseDescription", "")
+
+            db.session.commit()
+
+            return jsonify(
+                message="Order received. Check your phone for the M-Pesa payment prompt.",
+                order_id=order.id,
+                payment_status=order.payment_status,
+                checkout_request_id=order.mpesa_checkout_request_id,
+            ), 201
+
+        except ValueError as exc:
+            order.payment_status = "payment_error"
+            order.mpesa_result_desc = str(exc)
+            db.session.commit()
+            return jsonify(
+                message="Order received, but payment could not be started.",
+                order_id=order.id,
+                payment_status=order.payment_status,
+                error=str(exc),
+            ), 400
+
+        except Exception as exc:
+            current_app.logger.exception("M-Pesa STK Push failed for order %s", order.id)
+            order.payment_status = "payment_error"
+            order.mpesa_result_desc = str(exc)[:500]
+            db.session.commit()
+            return jsonify(
+                message="Order received, but M-Pesa could not be started. Please try again.",
+                order_id=order.id,
+                payment_status=order.payment_status,
+            ), 502
+
+    return jsonify(
+        message="Order received. Price will be confirmed before service.",
+        order_id=order.id,
+        payment_status="pending",
+    ), 201
+
+
+@main.post("/api/mpesa/callback")
+def mpesa_callback():
+    data = request.get_json(silent=True) or {}
+    stk = data.get("Body", {}).get("stkCallback", {})
+
+    checkout_id = stk.get("CheckoutRequestID")
+    result_code = stk.get("ResultCode")
+    result_desc = stk.get("ResultDesc", "")
+
+    if not checkout_id:
+        return jsonify(ResultCode=0, ResultDesc="Accepted")
+
+    order = Order.query.filter_by(
+        mpesa_checkout_request_id=checkout_id
+    ).first()
+
+    if not order:
+        current_app.logger.warning(
+            "M-Pesa callback for unknown checkout request: %s",
+            checkout_id,
+        )
+        return jsonify(ResultCode=0, ResultDesc="Accepted")
+
+    order.mpesa_result_code = str(result_code)
+    order.mpesa_result_desc = str(result_desc)[:500]
+
+    # ResultCode 0 means the customer payment completed successfully.
+    if str(result_code) == "0":
+        metadata = stk.get("CallbackMetadata", {}).get("Item", [])
+
+        values = {
+            item.get("Name"): item.get("Value")
+            for item in metadata
+            if item.get("Name")
+        }
+
+        receipt = values.get("MpesaReceiptNumber")
+
+        order.payment_status = "paid"
+        order.mpesa_receipt = str(receipt) if receipt else None
+        order.paid_at = datetime.now(timezone.utc)
+
+    else:
+        order.payment_status = "failed"
+
+    db.session.commit()
+
+    return jsonify(ResultCode=0, ResultDesc="Accepted")
+
+
+@main.get("/api/orders/<int:order_id>/payment-status")
+def payment_status(order_id):
+    order = db.session.get(Order, order_id)
+
+    if not order:
+        return jsonify(error="Order not found."), 404
+
+    phone = request.args.get("phone", "").strip()
+
+    if phone and normalize_mpesa_phone(phone) != normalize_mpesa_phone(order.phone):
+        return jsonify(error="Order not found."), 404
+
+    return jsonify(
+        order_id=order.id,
+        payment_status=order.payment_status,
+        receipt=order.mpesa_receipt,
+        result_description=order.mpesa_result_desc,
+    )
 
 
 @main.post("/api/service-requests")

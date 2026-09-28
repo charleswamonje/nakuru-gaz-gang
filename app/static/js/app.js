@@ -151,6 +151,8 @@
       return;
     }
 
+    result.textContent = 'Submitting order and starting M-Pesa payment...';
+
     try{
       const r = await post(
         '/api/orders',
@@ -161,8 +163,16 @@
       const d = await r.json();
 
       if(r.ok){
-        result.textContent =
-          `ORDER RECEIVED — Order #${d.order_id}. Keep this order number for your payment/reference.`;
+        if(d.payment_status === 'prompt_sent'){
+          result.textContent =
+            `ORDER #${d.order_id} RECEIVED — Check your phone and enter your M-Pesa PIN to complete payment.`;
+        }else if(d.payment_status === 'pending'){
+          result.textContent =
+            `ORDER #${d.order_id} RECEIVED — Payment will be confirmed before service.`;
+        }else{
+          result.textContent =
+            d.message || `ORDER #${d.order_id} RECEIVED.`;
+        }
 
         const orderIdField = document.getElementById('orderId');
         if(orderIdField){
@@ -171,7 +181,7 @@
 
         const paymentBox = document.getElementById('paymentReferenceBox');
         if(paymentBox){
-          paymentBox.style.display = 'block';
+          paymentBox.style.display = 'none';
         }
 
         cart.length = 0;
@@ -184,6 +194,7 @@
       }
 
     }catch(e){
+      console.error(e);
       result.textContent =
         'Network error. Please try again.';
     }

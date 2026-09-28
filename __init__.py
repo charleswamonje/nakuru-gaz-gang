@@ -25,6 +25,18 @@ def create_app():
     app.config["SMTP_PASSWORD"] = os.getenv("SMTP_PASSWORD")
     app.config["SMTP_FROM"] = os.getenv("SMTP_FROM", "redgroup@gmail.com")
     app.config["SHOW_DEV_EMAIL_LINK"] = os.getenv("SHOW_DEV_EMAIL_LINK", "false").lower() == "true"
+
+    # M-Pesa / Safaricom Daraja
+    app.config["MPESA_ENV"] = os.getenv("MPESA_ENV", "sandbox")
+    app.config["MPESA_CONSUMER_KEY"] = os.getenv("MPESA_CONSUMER_KEY")
+    app.config["MPESA_CONSUMER_SECRET"] = os.getenv("MPESA_CONSUMER_SECRET")
+    app.config["MPESA_SHORTCODE"] = os.getenv("MPESA_SHORTCODE")
+    app.config["MPESA_PASSKEY"] = os.getenv("MPESA_PASSKEY")
+    app.config["MPESA_CALLBACK_URL"] = os.getenv(
+        "MPESA_CALLBACK_URL",
+        "https://danstargasdelivery.co.ke/api/mpesa/callback"
+    )
+    app.config["MPESA_TILL_NUMBER"] = os.getenv("MPESA_TILL_NUMBER", "")
     app.config.update(SESSION_COOKIE_SECURE=True, SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE="Lax", PERMANENT_SESSION_LIFETIME=timedelta(hours=12))
 
     db.init_app(app); limiter.init_app(app)
@@ -44,5 +56,37 @@ def create_app():
 
     with app.app_context():
         from . import models
-        db.create_all(); models.seed_data()
+        db.create_all()
+
+        # Safe lightweight migration for existing PostgreSQL/SQLite databases.
+        inspector = db.inspect(db.engine)
+        columns = {c["name"] for c in inspector.get_columns("order")}
+        additions = {
+            "payment_status": "VARCHAR(30) DEFAULT 'pending'",
+            "payment_phone": "VARCHAR(30)",
+            "mpesa_checkout_request_id": "VARCHAR(100)",
+            "mpesa_merchant_request_id": "VARCHAR(100)",
+            "mpesa_receipt": "VARCHAR(100)",
+            "mpesa_result_code": "VARCHAR(30)",
+            "mpesa_result_desc": "VARCHAR(500)",
+            "paid_at": "TIMESTAMP",
+        }
+
+        for column, definition in additions.items():
+            if column not in columns:
+                if db.engine.dialect.name == "postgresql":
+                    db.session.execute(
+                        db.text(
+                            f'ALTER TABLE "order" ADD COLUMN "{column}" {definition}'
+                        )
+                    )
+                else:
+                    db.session.execute(
+                        db.text(
+                            f'ALTER TABLE "order" ADD COLUMN "{column}" {definition}'
+                        )
+                    )
+
+        db.session.commit()
+        models.seed_data()
     return app

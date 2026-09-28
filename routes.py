@@ -443,6 +443,38 @@ def mpesa_callback():
     return jsonify(ResultCode=0, ResultDesc="Accepted")
 
 
+@main.get("/api/orders/<int:order_id>/status")
+def order_status(order_id):
+    order = db.session.get(Order, order_id)
+
+    if not order:
+        return jsonify(error="Order not found."), 404
+
+    phone = request.args.get("phone", "").strip()
+
+    if not phone or normalize_mpesa_phone(phone) != normalize_mpesa_phone(order.phone):
+        return jsonify(error="Order not found."), 404
+
+    history = [
+        {
+            "status": order.status or "received",
+            "created_at": (
+                order.created_at.isoformat()
+                if order.created_at else None
+            ),
+            "note": "Order received."
+        }
+    ]
+
+    return jsonify(
+        order_id=order.id,
+        status=order.status or "received",
+        payment_status=order.payment_status or "pending",
+        receipt=order.mpesa_receipt,
+        history=history
+    )
+
+
 @main.get("/api/orders/<int:order_id>/payment-status")
 def payment_status(order_id):
     order = db.session.get(Order, order_id)

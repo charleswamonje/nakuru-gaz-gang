@@ -701,18 +701,93 @@ if ('serviceWorker' in navigator) {
   const searchPanel = document.getElementById('portalSearchPanel');
   const searchClose = document.getElementById('portalSearchClose');
   const searchInput = document.getElementById('portalSearchInput');
+  const searchResults = document.getElementById('portalSearchResults');
 
   if (!searchButton || !searchPanel) return;
 
   function openSearch() {
     searchPanel.hidden = false;
+
     if (searchInput) {
       searchInput.focus();
+      renderSearchResults(searchInput.value);
     }
   }
 
   function closeSearch() {
     searchPanel.hidden = true;
+  }
+
+  function renderSearchResults(query) {
+    if (!searchResults) return;
+
+    const term = (query || '').trim().toLowerCase();
+
+    if (!term) {
+      searchResults.innerHTML =
+        '<p class="portal-search-empty">Search products or services above.</p>';
+      return;
+    }
+
+    const matches = [];
+
+    document.querySelectorAll('.product-card').forEach(card => {
+      const name = card.querySelector('h3')?.textContent.trim() || '';
+      const category = card.querySelector('.product-category')?.textContent.trim() || '';
+      const description = card.querySelector('p')?.textContent.trim() || '';
+
+      const searchable = `${name} ${category} ${description}`.toLowerCase();
+
+      if (searchable.includes(term)) {
+        matches.push({
+          type: 'PRODUCT',
+          name,
+          description,
+          target: '#products'
+        });
+      }
+    });
+
+    document.querySelectorAll('.service-card li').forEach(item => {
+      const button = item.querySelector('.choose-service');
+
+      if (!button) return;
+
+      const name = button.textContent.trim();
+      const searchable = name.toLowerCase();
+
+      if (searchable.includes(term)) {
+        matches.push({
+          type: 'SERVICE',
+          name,
+          description: 'Technical or delivery service',
+          target: '#services'
+        });
+      }
+    });
+
+    if (!matches.length) {
+      searchResults.innerHTML =
+        `<p class="portal-search-empty">No results found for "${escapeSearchText(query)}".</p>`;
+      return;
+    }
+
+    searchResults.innerHTML = matches.map(match => `
+      <a class="portal-search-result" href="${match.target}">
+        <span class="portal-search-result-type">${escapeSearchText(match.type)}</span>
+        <strong>${escapeSearchText(match.name)}</strong>
+        <small>${escapeSearchText(match.description)}</small>
+      </a>
+    `).join('');
+  }
+
+  function escapeSearchText(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
   }
 
   searchButton.addEventListener('click', () => {
@@ -727,9 +802,24 @@ if ('serviceWorker' in navigator) {
     searchClose.addEventListener('click', closeSearch);
   }
 
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      renderSearchResults(searchInput.value);
+    });
+
+    searchInput.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        closeSearch();
+      }
+    });
+  }
+
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape') {
       closeSearch();
     }
   });
+
+  renderSearchResults('');
 })();
+

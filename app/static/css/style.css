@@ -932,3 +932,57 @@ footer {
         grid-template-columns: 1fr;
     }
 }
+
+/* ================= PORTAL SEARCH RESULTS ================= */
+
+.portal-search-results {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+.portal-search-empty {
+    margin: 0;
+    padding: 14px;
+    color: #8da7bd;
+    border: 1px solid rgba(77,184,255,.14);
+    border-radius: 8px;
+    background: rgba(5,14,26,.65);
+}
+
+.portal-search-result {
+    display: grid;
+    gap: 3px;
+    padding: 14px 16px;
+    text-decoration: none;
+    color: #dceeff;
+    background: rgba(7,16,29,.92);
+    border: 1px solid rgba(77,184,255,.20);
+    border-radius: 9px;
+    transition: .2s ease;
+}
+
+.portal-search-result:hover {
+    background: rgba(13,36,58,.96);
+    border-color: rgba(115,232,255,.55);
+    transform: translateX(3px);
+}
+
+.portal-search-result-type {
+    font-size: .68rem;
+    font-weight: 800;
+    letter-spacing: .14em;
+    color: #73e8ff;
+}
+
+.portal-search-result strong {
+    color: #eefaff;
+    font-size: .98rem;
+}
+
+.portal-search-result small {
+    color: #8da7bd;
+}
+

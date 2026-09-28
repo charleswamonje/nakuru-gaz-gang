@@ -905,6 +905,11 @@ def admin_sales():
         orders=orders
     )
 
+@main.get("/robots.txt")
+def robots_txt():
+    return current_app.send_static_file("robots.txt")
+
+
 @main.get("/admin")
 def admin():
     if not session.get("admin"):

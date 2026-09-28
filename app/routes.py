@@ -910,6 +910,11 @@ def robots_txt():
     return current_app.send_static_file("robots.txt")
 
 
+@main.get("/sitemap.xml")
+def sitemap_xml():
+    return current_app.response_class("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <url>\n    <loc>https://danstargasdelivery.co.ke/</loc>\n  </url>\n</urlset>", mimetype="application/xml")
+
+
 @main.get("/admin")
 def admin():
     if not session.get("admin"):

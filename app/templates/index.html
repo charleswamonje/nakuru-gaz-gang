@@ -175,18 +175,33 @@
         <h2>HELP & SUPPORT</h2>
 
         <p>
-            Need help with an order, delivery, gas refill, water,
-            or a technology service? Danstar is here to assist.
+            Need help with an order, delivery, payment or technical service?
+            Choose the support option you need.
         </p>
 
-        <p>
-            <strong>Call us:</strong>
-            <a href="tel:0710525480">0710525480</a>
-        </p>
+        <div class="portal-support-actions">
 
-        <a class="portal-info-action" href="#order">
-            GET HELP
-        </a>
+            <a class="portal-info-action"
+               href="tel:{{ business.customer_care_phone }}">
+                CALL US
+            </a>
+
+            <a class="portal-info-action"
+               href="#order-tracking">
+                ORDER HELP
+            </a>
+
+            <a class="portal-info-action"
+               href="#service-request">
+                TECHNICAL SUPPORT
+            </a>
+
+            <a class="portal-info-action"
+               href="#direct-customer-care">
+                CUSTOMER CARE
+            </a>
+
+        </div>
 
     </article>
 
@@ -915,7 +930,7 @@
 
 <!-- ================= PHONE / WHATSAPP ================= -->
 
-<section class="contact">
+<section class="contact" id="direct-customer-care">
 
     <p class="eyebrow">DIRECT CUSTOMER CARE</p>
 

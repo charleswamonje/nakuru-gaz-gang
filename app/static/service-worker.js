@@ -1,4 +1,4 @@
-const CACHE_NAME = 'danstar-gas-v5';
+const CACHE_NAME = 'danstar-gas-v6';
 
 const APP_SHELL = [
   '/',

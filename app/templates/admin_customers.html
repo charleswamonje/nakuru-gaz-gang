@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Danstar Gas Delivery | Customer Control</title>
+
+<style>
+body{
+    margin:0;
+    background:#f4f4f4;
+    color:#111;
+    font-family:"Courier New",monospace;
+}
+
+header{
+    background:#111;
+    color:#fff;
+    padding:20px;
+}
+
+main{
+    width:94%;
+    max-width:1200px;
+    margin:30px auto;
+}
+
+.card{
+    background:#fff;
+    border:1px solid #ccc;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+.customer{
+    border:2px solid #ccc;
+    padding:20px;
+    margin:18px 0;
+}
+
+.enabled{
+    border-color:#168a45;
+}
+
+.disabled{
+    border-color:#b00020;
+}
+
+.status{
+    font-weight:bold;
+    text-transform:uppercase;
+}
+
+button{
+    padding:11px 16px;
+    font-family:inherit;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.disable{
+    color:#b00020;
+    border:1px solid #b00020;
+    background:#fff;
+}
+
+.enable{
+    color:#168a45;
+    border:1px solid #168a45;
+    background:#fff;
+}
+
+button:hover{
+    background:#eee;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:12px;
+}
+
+.stat{
+    border:1px solid #ccc;
+    padding:15px;
+    background:#fafafa;
+}
+
+.stat strong{
+    display:block;
+    font-size:28px;
+    margin-top:8px;
+}
+
+.links{
+    margin-top:15px;
+}
+
+a{
+    color:#111;
+    font-weight:bold;
+}
+</style>
+
+<script>
+function confirmCustomerAction(message){
+    return window.confirm(message);
+}
+</script>
+
+</head>
+
+<body>
+
+<header>
+    <strong>DANSTAR GAS DELIVERY — ADMIN</strong>
+    <div>CUSTOMER CONTROL CENTRE</div>
+</header>
+
+<main>
+
+<section class="card">
+
+    <h1>Customer Control</h1>
+
+    <p>
+        Monitor registered customers and control whether individual
+        customers are permitted to place new purchases.
+    </p>
+
+    <div class="stats">
+
+        <div class="stat">
+            TOTAL CUSTOMERS
+            <strong>{{ customer_rows|length }}</strong>
+        </div>
+
+        <div class="stat">
+            PURCHASING ENABLED
+            <strong>
+                {{ customer_rows|selectattr("customer.purchasing_enabled")|list|length }}
+            </strong>
+        </div>
+
+        <div class="stat">
+            PURCHASING DISABLED
+            <strong>
+                {{ customer_rows|rejectattr("customer.purchasing_enabled")|list|length }}
+            </strong>
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="card">
+
+    <h2>Registered Customers</h2>
+
+    {% if customer_rows %}
+
+        {% for row in customer_rows %}
+
+        {% set customer = row.customer %}
+
+        <article class="customer
+            {% if customer.purchasing_enabled %}
+                enabled
+            {% else %}
+                disabled
+            {% endif %}
+        ">
+
+            <h2>
+                CUSTOMER #{{ customer.id }}
+            </h2>
+
+            <p>
+                <strong>Email:</strong>
+                {{ customer.email }}
+            </p>
+
+            <p>
+                <strong>Email verified:</strong>
+                {{ "YES" if customer.email_verified else "NO" }}
+            </p>
+
+            <p>
+                <strong>Registered:</strong>
+                {{ customer.created_at }}
+            </p>
+
+            <p>
+                <strong>Orders:</strong>
+                {{ row.order_count }}
+            </p>
+
+            <p>
+                <strong>Service requests:</strong>
+                {{ row.service_count }}
+            </p>
+
+            <p>
+                <strong>Feedback:</strong>
+                {{ row.feedback_count }}
+            </p>
+
+            <p>
+                <strong>Purchasing:</strong>
+
+                {% if customer.purchasing_enabled %}
+
+                    <span class="status">
+                        ENABLED
+                    </span>
+
+                {% else %}
+
+                    <span class="status">
+                        DISABLED
+                    </span>
+
+                {% endif %}
+
+            </p>
+
+
+            {% if customer.purchasing_enabled %}
+
+            <form
+                method="post"
+                action="{{ url_for('main.admin_customer_purchasing', user_id=customer.id) }}"
+                onsubmit="return confirmCustomerAction('Disable purchasing for this customer? They will no longer be allowed to place new purchases.');"
+            >
+
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+
+                <input
+                    type="hidden"
+                    name="action"
+                    value="disable"
+                >
+
+                <button class="disable" type="submit">
+                    DISABLE PURCHASING
+                </button>
+
+            </form>
+
+            {% else %}
+
+            <form
+                method="post"
+                action="{{ url_for('main.admin_customer_purchasing', user_id=customer.id) }}"
+                onsubmit="return confirmCustomerAction('Restore purchasing access for this customer?');"
+            >
+
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+
+                <input
+                    type="hidden"
+                    name="action"
+                    value="enable"
+                >
+
+                <button class="enable" type="submit">
+                    RESTORE PURCHASING
+                </button>
+
+            </form>
+
+            {% endif %}
+
+        </article>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>No registered customers yet.</p>
+
+    {% endif %}
+
+</section>
+
+
+<section class="card links">
+
+    <a href="/admin">
+        ADMIN CONTROL CENTRE
+    </a>
+
+    &nbsp; | &nbsp;
+
+    <a href="/admin/orders">
+        ORDERS
+    </a>
+
+    &nbsp; | &nbsp;
+
+    <a href="/admin/payments">
+        PAYMENTS
+    </a>
+
+    &nbsp; | &nbsp;
+
+    <a href="/admin/customer-activity">
+        CUSTOMER ACTIVITY
+    </a>
+
+</section>
+
+</main>
+
+</body>
+</html>

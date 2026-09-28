@@ -779,7 +779,12 @@ def admin_update_order(order_id):
         "delivered",
         "cancelled",
     }
-    allowed_payment_statuses = {"pending", "paid", "failed"}
+    allowed_payment_statuses = {
+        "pending",
+        "paid",
+        "failed",
+        "refunded",
+    }
     allowed_payment_methods = {"", "mpesa", "cash", "paypal"}
 
     new_status = clean_text(request.form.get("status", order.status), 40)
@@ -821,10 +826,32 @@ def admin_update_order(order_id):
                 entity_id=order.id
             )
 
+    old_payment_status = order.payment_status
+    old_payment_reference = order.payment_reference
+
     order.status = new_status
     order.payment_status = new_payment_status
     order.payment_method = new_payment_method
     order.payment_reference = new_payment_reference
+
+    if new_payment_status != old_payment_status:
+        db.session.add(
+            StatusHistory(
+                entity_type="order",
+                entity_id=order.id,
+                status=f"payment_{new_payment_status}",
+                note="Payment status changed by admin."
+            )
+        )
+
+        if order.user_id:
+            create_notification(
+                user_id=order.user_id,
+                title=f"Order #{order.id} payment updated",
+                message=f"Your payment status is now {new_payment_status}.",
+                entity_type="order",
+                entity_id=order.id
+            )
 
     db.session.commit()
 
@@ -952,7 +979,151 @@ def sitemap_xml():
 def admin():
     if not session.get("admin"):
         abort(403)
-    return render_template("admin_dashboard.html", stats={"orders": Order.query.count(), "service_requests": ServiceRequest.query.count(), "products": Product.query.count(), "services": Service.query.count(), "customers": User.query.filter_by(role="customer").count(), "email_public": email_public(), "payment_and_customer_care": "0710525480"})
+
+    orders = Order.query.order_by(Order.created_at.desc()).all()
+
+    stats = {
+        "orders": len(orders),
+        "service_requests": ServiceRequest.query.count(),
+        "products": Product.query.count(),
+        "active_products": Product.query.filter_by(active=True).count(),
+        "inactive_products": Product.query.filter_by(active=False).count(),
+        "services": Service.query.count(),
+        "active_services": Service.query.filter_by(active=True).count(),
+        "customers": User.query.filter_by(role="customer").count(),
+        "feedback": CustomerFeedback.query.count(),
+        "pending_feedback": CustomerFeedback.query.filter_by(status="pending").count(),
+        "pending_payments": Order.query.filter(
+            Order.payment_status == "pending",
+            Order.payment_reference != ""
+        ).count(),
+        "paid_orders": Order.query.filter_by(payment_status="paid").count(),
+        "cancelled_orders": Order.query.filter_by(status="cancelled").count(),
+        "email_public": email_public(),
+        "payment_and_customer_care": "0710525480",
+    }
+
+    recent_orders = orders[:10]
+
+    recent_feedback = (
+        CustomerFeedback.query
+        .order_by(CustomerFeedback.created_at.desc())
+        .limit(5)
+        .all()
+    )
+
+    return render_template(
+        "admin_dashboard.html",
+        stats=stats,
+        recent_orders=recent_orders,
+        recent_feedback=recent_feedback
+    )
+
+
+@main.get("/admin/customers")
+def admin_customers():
+    if not session.get("admin"):
+        abort(403)
+
+    customers = (
+        User.query
+        .filter_by(role="customer")
+        .order_by(User.created_at.desc())
+        .all()
+    )
+
+    customer_rows = []
+
+    for customer in customers:
+        order_count = Order.query.filter_by(user_id=customer.id).count()
+        service_count = ServiceRequest.query.filter_by(user_id=customer.id).count()
+        feedback_count = CustomerFeedback.query.filter_by(user_id=customer.id).count()
+
+        customer_rows.append({
+            "customer": customer,
+            "order_count": order_count,
+            "service_count": service_count,
+            "feedback_count": feedback_count,
+        })
+
+    return render_template(
+        "admin_customers.html",
+        customer_rows=customer_rows
+    )
+
+
+@main.post("/admin/customers/<int:user_id>/purchasing")
+def admin_customer_purchasing(user_id):
+    if not session.get("admin"):
+        abort(403)
+
+    customer = db.session.get(User, user_id)
+
+    if customer is None or customer.role != "customer":
+        abort(404)
+
+    action = clean_text(request.form.get("action"), 20).lower()
+
+    if action == "disable":
+        customer.purchasing_enabled = False
+        message = "Purchasing disabled by administrator."
+
+    elif action == "enable":
+        customer.purchasing_enabled = True
+        message = "Purchasing enabled by administrator."
+
+    else:
+        return "Invalid customer purchasing action.", 400
+
+    db.session.commit()
+
+    create_notification(
+        user_id=customer.id,
+        title="Purchasing access updated",
+        message=message,
+        entity_type="customer",
+        entity_id=customer.id
+    )
+
+    return redirect(url_for("main.admin_customers"))
+
+
+@main.get("/admin/customer-activity")
+def admin_customer_activity():
+    if not session.get("admin"):
+        abort(403)
+
+    feedback = (
+        CustomerFeedback.query
+        .order_by(CustomerFeedback.created_at.desc())
+        .all()
+    )
+
+    return render_template(
+        "admin_customer_activity.html",
+        feedback=feedback
+    )
+
+
+@main.post("/admin/customer-activity/<int:feedback_id>/status")
+def admin_customer_feedback_status(feedback_id):
+    if not session.get("admin"):
+        abort(403)
+
+    feedback = db.session.get(CustomerFeedback, feedback_id)
+
+    if not feedback:
+        abort(404)
+
+    status = (request.form.get("status") or "").strip().lower()
+
+    if status not in {"pending", "reviewed", "resolved"}:
+        return "Invalid feedback status.", 400
+
+    feedback.status = status
+    db.session.commit()
+
+    return redirect(url_for("main.admin_customer_activity"))
 
 
 @main.get("/admin/products")

@@ -11,7 +11,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
 from . import db, limiter, csrf
-from .models import User, Product, Service, Order, OrderItem, ServiceRequest, StatusHistory, Notification
+from .models import User, Product, Service, Order, OrderItem, ServiceRequest, CustomerFeedback, StatusHistory, Notification
 from .mpesa import get_mpesa_access_token
 from .models import BusinessSetting
 

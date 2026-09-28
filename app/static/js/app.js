@@ -851,10 +851,14 @@ if ('serviceWorker' in navigator) {
     }
 
     try {
+      const csrfToken =
+        document.querySelector('meta[name="csrf-token"]')?.content || '';
+
       const response = await fetch('/api/feedback', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
         },
         body: JSON.stringify({
           name,

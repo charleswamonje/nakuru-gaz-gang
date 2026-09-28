@@ -617,3 +617,298 @@
         flex-direction: column;
     }
 }
+
+/* =========================================================
+   DANSTAR FUTURISTIC DARK THEME
+   ========================================================= */
+
+:root {
+    font-family: "Courier New", Courier, monospace;
+    color: #dceeff;
+    background: #050914;
+    line-height: 1.55;
+    --danstar-bg: #050914;
+    --danstar-panel: #091221;
+    --danstar-panel-2: #0d192b;
+    --danstar-blue: #4db8ff;
+    --danstar-cyan: #73e8ff;
+    --danstar-text: #dceeff;
+    --danstar-muted: #8da7bd;
+    --danstar-border: rgba(77,184,255,.24);
+}
+
+html {
+    background: #050914;
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background:
+        radial-gradient(circle at 15% 10%, rgba(0,145,255,.12), transparent 28%),
+        radial-gradient(circle at 85% 30%, rgba(0,220,255,.07), transparent 25%),
+        linear-gradient(135deg, #050914 0%, #07101e 48%, #030711 100%);
+    color: var(--danstar-text);
+    min-height: 100vh;
+}
+
+main {
+    max-width: 1220px;
+    margin: 0 auto;
+    padding: 30px 20px 70px;
+}
+
+.hero,
+.panel,
+.values > div,
+.card,
+.contact {
+    background:
+        linear-gradient(145deg, rgba(13,25,43,.96), rgba(6,14,27,.97));
+    color: var(--danstar-text);
+    border: 1px solid var(--danstar-border);
+    border-radius: 14px;
+    box-shadow:
+        0 0 0 1px rgba(77,184,255,.035),
+        0 12px 40px rgba(0,0,0,.35);
+}
+
+.hero {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(30px,6vw,70px) clamp(24px,5vw,60px);
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(rgba(77,184,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(77,184,255,.035) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: linear-gradient(to bottom, black, transparent);
+}
+
+.hero h1 {
+    position: relative;
+    color: #f2fbff;
+    letter-spacing: .05em;
+    text-shadow: 0 0 22px rgba(77,184,255,.22);
+}
+
+.hero-text,
+.section-intro,
+.panel p,
+.card p,
+.values p {
+    color: var(--danstar-muted);
+}
+
+.eyebrow,
+.feature-number {
+    color: var(--danstar-cyan);
+    letter-spacing: .14em;
+    font-weight: 800;
+}
+
+h1, h2, h3 {
+    color: #eefaff;
+}
+
+h2 {
+    margin-top: 28px;
+}
+
+a {
+    color: var(--danstar-cyan);
+}
+
+.linkbutton {
+    background: rgba(77,184,255,.08);
+    color: var(--danstar-cyan);
+    border: 1px solid rgba(77,184,255,.28);
+    border-radius: 7px;
+    padding: 10px 14px;
+    text-decoration: none;
+    display: inline-block;
+    transition: .2s ease;
+}
+
+.linkbutton:hover {
+    background: rgba(77,184,255,.16);
+    border-color: rgba(115,232,255,.65);
+    box-shadow: 0 0 18px rgba(77,184,255,.12);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(77,184,255,.42);
+    box-shadow: 0 14px 42px rgba(0,0,0,.42);
+}
+
+.product-image {
+    background: #050b15;
+    border: 1px solid rgba(77,184,255,.14);
+}
+
+input,
+textarea,
+select {
+    background: #07101d;
+    color: #e5f5ff;
+    border: 1px solid rgba(77,184,255,.28);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #637d93;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--danstar-cyan);
+    box-shadow: 0 0 0 2px rgba(77,184,255,.08);
+}
+
+button {
+    background: linear-gradient(135deg, #0d466b, #0a2943);
+    color: #eaf9ff;
+    border: 1px solid rgba(77,184,255,.35);
+}
+
+button:hover {
+    background: linear-gradient(135deg, #12618e, #0b3554);
+    box-shadow: 0 0 18px rgba(77,184,255,.16);
+}
+
+hr {
+    border-top-color: rgba(77,184,255,.18);
+}
+
+footer {
+    color: #6f8ba2;
+    background: #030711;
+}
+
+.cart-row {
+    border-bottom-color: rgba(77,184,255,.14);
+}
+
+.order-tracking,
+.tracking-status-line,
+.tracking-payment {
+    background: #07101d;
+    border-color: rgba(77,184,255,.20);
+    color: var(--danstar-text);
+}
+
+.tracking-step {
+    background: #101d2e;
+    color: #7691a8;
+}
+
+.tracking-step-number {
+    background: #1a2d43;
+    color: #9cb8cf;
+}
+
+.tracking-step.active {
+    background: #0b4164;
+}
+
+.tracking-step.completed {
+    background: #124d45;
+}
+
+.tracking-status-line {
+    border: 1px solid rgba(77,184,255,.12);
+}
+
+.tracking-cancelled {
+    background: rgba(127,29,29,.25);
+    color: #ffb4b4;
+}
+
+/* =========================================================
+   HELP & SUPPORT / ABOUT US PORTAL BOXES
+   ========================================================= */
+
+.portal-info-pair {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin: 28px 0;
+}
+
+.portal-info-box {
+    position: relative;
+    overflow: hidden;
+    padding: 26px;
+    background:
+        linear-gradient(145deg, rgba(12,28,47,.98), rgba(5,14,26,.98));
+    border: 1px solid rgba(77,184,255,.28);
+    border-radius: 14px;
+    box-shadow: 0 12px 35px rgba(0,0,0,.30);
+}
+
+.portal-info-box::after {
+    content: "";
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    right: -50px;
+    top: -50px;
+    border: 1px solid rgba(115,232,255,.15);
+    border-radius: 50%;
+}
+
+.portal-info-box h2 {
+    margin-top: 0;
+    color: #eefaff;
+}
+
+.portal-info-box p {
+    color: #91aabd;
+}
+
+.portal-info-label {
+    color: var(--danstar-cyan);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .16em;
+}
+
+.portal-info-box .portal-info-action {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 9px 13px;
+    border: 1px solid rgba(77,184,255,.32);
+    border-radius: 7px;
+    color: var(--danstar-cyan);
+    text-decoration: none;
+    background: rgba(77,184,255,.06);
+}
+
+.portal-info-box .portal-info-action:hover {
+    background: rgba(77,184,255,.14);
+}
+
+.about-message {
+    border-left: 2px solid var(--danstar-cyan);
+    padding-left: 18px;
+}
+
+@media (max-width: 700px) {
+    .portal-info-pair {
+        grid-template-columns: 1fr;
+    }
+
+    main {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+}

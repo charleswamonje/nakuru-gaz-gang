@@ -986,3 +986,75 @@ footer {
     color: #8da7bd;
 }
 
+
+/* ================= DANSTAR FAQ ================= */
+
+.portal-faq {
+    margin: 34px 0;
+    padding: 28px;
+    border: 1px solid rgba(77,184,255,.20);
+    border-radius: 12px;
+    background: rgba(5,14,26,.82);
+    box-shadow: 0 0 28px rgba(0,0,0,.22);
+}
+
+.portal-faq-heading {
+    margin-bottom: 20px;
+}
+
+.portal-faq-heading h2 {
+    margin: 6px 0 10px;
+}
+
+.portal-faq-heading p {
+    color: #8da7bd;
+}
+
+.portal-faq-list {
+    display: grid;
+    gap: 10px;
+}
+
+.portal-faq details {
+    border: 1px solid rgba(77,184,255,.16);
+    border-radius: 8px;
+    background: rgba(7,16,29,.90);
+    overflow: hidden;
+}
+
+.portal-faq summary {
+    cursor: pointer;
+    padding: 16px 18px;
+    color: #dceeff;
+    font-weight: 700;
+    list-style: none;
+}
+
+.portal-faq summary::-webkit-details-marker {
+    display: none;
+}
+
+.portal-faq summary::after {
+    content: "+";
+    float: right;
+    color: #73e8ff;
+    font-size: 1.2rem;
+}
+
+.portal-faq details[open] summary::after {
+    content: "−";
+}
+
+.portal-faq details p {
+    margin: 0;
+    padding: 0 18px 17px;
+    color: #8da7bd;
+    line-height: 1.7;
+}
+
+@media (max-width: 600px) {
+    .portal-faq {
+        padding: 20px 16px;
+    }
+}
+

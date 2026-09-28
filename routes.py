@@ -559,6 +559,11 @@ def admin_update_order_status(order_id):
     )
 
 
+@main.get("/robots.txt")
+def robots_txt():
+    return current_app.send_static_file("robots.txt")
+
+
 @main.get("/admin")
 def admin():
     if not session.get("admin"): abort(403)

@@ -285,7 +285,8 @@ def mark_notification_read(notification_id):
     if user is None:
         return jsonify(error="Authentication required."), 401
 
-    notification = db.session.get(Notification, notification_id)
+    notification = db.session.get(Notification,
+    CustomerFeedback, notification_id)
 
     if notification is None or notification.user_id != user.id:
         return jsonify(error="Notification not found."), 404
@@ -570,6 +571,38 @@ def submit_payment_reference(order_id):
     order.payment_reference = reference
     db.session.commit()
     return jsonify(message="Payment reference received. Admin will verify the payment.", order_id=order.id)
+
+
+@main.post("/api/feedback")
+def submit_feedback():
+    data = request.get_json(silent=True) or request.form
+
+    name = (data.get("name") or "").strip()
+    phone = (data.get("phone") or "").strip()
+    message = (data.get("message") or "").strip()
+
+    if not name or not message:
+        return jsonify(error="Name and feedback message are required."), 400
+
+    if len(name) > 120 or len(phone) > 30 or len(message) > 1000:
+        return jsonify(error="Feedback is too long."), 400
+
+    user = current_user()
+
+    feedback = CustomerFeedback(
+        name=name,
+        phone=phone,
+        message=message,
+        user_id=user.id if user else None
+    )
+
+    db.session.add(feedback)
+    db.session.commit()
+
+    return jsonify(
+        ok=True,
+        message="Thank you. Your feedback has been received."
+    ), 201
 
 
 @main.post("/api/service-requests")

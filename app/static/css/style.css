@@ -1058,3 +1058,68 @@ footer {
     }
 }
 
+
+/* ================= DANSTAR CUSTOMER FEEDBACK ================= */
+
+.portal-feedback {
+    margin: 34px 0;
+    padding: 28px;
+    border: 1px solid rgba(77,184,255,.20);
+    border-radius: 12px;
+    background: rgba(5,14,26,.82);
+    box-shadow: 0 0 28px rgba(0,0,0,.22);
+}
+
+.portal-feedback-heading {
+    margin-bottom: 20px;
+}
+
+.portal-feedback-heading h2 {
+    margin: 6px 0 10px;
+}
+
+.portal-feedback-heading p {
+    color: #8da7bd;
+}
+
+.portal-feedback-form {
+    display: grid;
+    gap: 12px;
+    max-width: 720px;
+}
+
+.portal-feedback-form input,
+.portal-feedback-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 16px;
+    border: 1px solid rgba(77,184,255,.20);
+    border-radius: 8px;
+    background: rgba(7,16,29,.95);
+    color: #dceeff;
+    font: inherit;
+}
+
+.portal-feedback-form textarea {
+    min-height: 130px;
+    resize: vertical;
+}
+
+.portal-feedback-form input:focus,
+.portal-feedback-form textarea:focus {
+    outline: none;
+    border-color: rgba(115,232,255,.65);
+}
+
+#feedbackResult {
+    min-height: 24px;
+    margin: 0;
+    color: #73e8ff;
+}
+
+@media (max-width: 600px) {
+    .portal-feedback {
+        padding: 20px 16px;
+    }
+}
+

@@ -823,3 +823,62 @@ if ('serviceWorker' in navigator) {
   renderSearchResults('');
 })();
 
+
+/* ================= CUSTOMER FEEDBACK ================= */
+
+(function () {
+  const form = document.getElementById('feedbackForm');
+  const result = document.getElementById('feedbackResult');
+
+  if (!form) return;
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+
+    const name = document.getElementById('feedbackName')?.value.trim() || '';
+    const phone = document.getElementById('feedbackPhone')?.value.trim() || '';
+    const message = document.getElementById('feedbackMessage')?.value.trim() || '';
+
+    if (!name || !message) {
+      if (result) {
+        result.textContent = 'Please enter your name and feedback.';
+      }
+      return;
+    }
+
+    if (result) {
+      result.textContent = 'Sending feedback...';
+    }
+
+    try {
+      const response = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name,
+          phone,
+          message
+        })
+      });
+
+      const payload = await response.json();
+
+      if (!response.ok) {
+        throw new Error(payload.error || 'Unable to send feedback.');
+      }
+
+      form.reset();
+
+      if (result) {
+        result.textContent = payload.message || 'Thank you. Your feedback has been received.';
+      }
+
+    } catch (error) {
+      if (result) {
+        result.textContent = error.message || 'Unable to send feedback.';
+      }
+    }
+  });
+})();

@@ -142,6 +142,13 @@ def create_app():
                 ))
             db.session.commit()
 
+        if "session_version" not in user_columns:
+            db.session.execute(text(
+                'ALTER TABLE "user" ADD COLUMN session_version '
+                'INTEGER NOT NULL DEFAULT 1'
+            ))
+            db.session.commit()
+
         models.seed_data()
 
     return app

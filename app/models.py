@@ -9,6 +9,7 @@ class User(db.Model):
     email_verified = db.Column(db.Boolean, default=False, nullable=False, index=True)
     role = db.Column(db.String(30), default="customer", nullable=False, index=True)
     purchasing_enabled = db.Column(db.Boolean, default=True, nullable=False, index=True)
+    session_version = db.Column(db.Integer, default=1, nullable=False, index=True)
     verification_token_hash = db.Column(db.String(64), index=True)
     verification_expires_at = db.Column(db.DateTime(timezone=True))
     reset_token_hash = db.Column(db.String(64), index=True)

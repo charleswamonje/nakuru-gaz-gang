@@ -158,7 +158,20 @@ def enforce_website_controls():
 
 def current_user():
     uid = session.get("user_id")
-    return db.session.get(User, uid) if uid else None
+    if not uid:
+        return None
+
+    user = db.session.get(User, uid)
+    if user is None:
+        session.clear()
+        return None
+
+    session_version = session.get("session_version")
+    if session_version != user.session_version:
+        session.clear()
+        return None
+
+    return user
 
 def create_notification(user_id, title, message, entity_type="", entity_id=None):
     if not user_id:
@@ -408,6 +421,7 @@ def login():
         return jsonify(error="Verify your email before signing in."), 403
     session.clear()
     session["user_id"] = user.id
+    session["session_version"] = user.session_version
     session.permanent = True
     return jsonify(message="Logged in securely.", role=user.role)
 
@@ -454,6 +468,7 @@ def reset_password(token):
     user.password_hash = generate_password_hash(password)
     user.reset_token_hash = None
     user.reset_expires_at = None
+    user.session_version += 1
     db.session.commit()
     return jsonify(message="Password changed. You can now sign in.")
 
@@ -1183,6 +1198,38 @@ def admin_customers():
         "admin_customers.html",
         customer_rows=customer_rows
     )
+
+
+@main.post("/admin/customers/<int:user_id>/logout-all")
+def admin_customer_logout_all(user_id):
+    if not session.get("admin"):
+        abort(403)
+
+    customer = db.session.get(User, user_id)
+
+    if customer is None or customer.role != "customer":
+        abort(404)
+
+    old_version = customer.session_version
+    customer.session_version += 1
+
+    record_admin_audit(
+        action=f"Customer sessions invalidated: {customer.id}",
+        old_value=str(old_version),
+        new_value=str(customer.session_version),
+    )
+
+    db.session.commit()
+
+    create_notification(
+        user_id=customer.id,
+        title="Security action completed",
+        message="Your active sessions have been signed out by the administrator. Please sign in again.",
+        entity_type="customer",
+        entity_id=customer.id
+    )
+
+    return redirect(url_for("main.admin_customer_detail", user_id=customer.id))
 
 
 @main.get("/admin/customers/<int:user_id>")

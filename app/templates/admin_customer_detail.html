@@ -164,6 +164,20 @@ a{
 </section>
 
 <section class="card">
+    <div style="margin-top:20px;padding:15px;border:1px solid #ccc;background:#fafafa;">
+        <strong>SESSION SECURITY CONTROL</strong>
+        <p>Invalidate all currently active customer sessions. The customer will need to sign in again.</p>
+
+        <form method="post"
+              action="{{ url_for('main.admin_customer_logout_all', user_id=customer.id) }}"
+              onsubmit="return confirm('Sign out this customer from all active sessions?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">
+                SIGN OUT ALL CUSTOMER SESSIONS
+            </button>
+        </form>
+    </div>
+
     <h2>Orders ({{ orders|length }})</h2>
 
     {% if orders %}

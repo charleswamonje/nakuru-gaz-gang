@@ -248,6 +248,14 @@
             SAVE BUSINESS SETTINGS
         </button>
 
+        <button
+            type="submit"
+            formaction="{{ url_for('main.restore_business_website') }}"
+            formmethod="post"
+        >
+            RESTORE WEBSITE ONLINE
+        </button>
+
         <a class="linkbutton"
            href="{{ url_for('main.admin') }}">
             CANCEL

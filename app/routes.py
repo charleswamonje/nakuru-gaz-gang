@@ -1807,6 +1807,36 @@ def admin_audit_log():
     )
 
 
+@main.post("/admin/business-settings/restore")
+def restore_business_website():
+    if not session.get("admin"):
+        abort(403)
+
+    setting = BusinessSetting.query.filter_by(key="website_enabled").first()
+
+    if setting is None:
+        setting = BusinessSetting(
+            key="website_enabled",
+            value="1"
+        )
+        db.session.add(setting)
+        old_value = ""
+    else:
+        old_value = setting.value
+        setting.value = "1"
+
+    if old_value != "1":
+        record_admin_audit(
+            action="Restored website online",
+            old_value=old_value,
+            new_value="1",
+        )
+
+    db.session.commit()
+
+    return redirect(url_for("main.admin_business_settings"))
+
+
 @main.post("/admin/business-settings")
 def save_business_settings():
     if not session.get("admin"):

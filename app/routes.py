@@ -1868,8 +1868,27 @@ def save_business_settings():
         else:
             setting.value = value
 
-    # Operational controls are intentionally preserved by the normal
-    # business-settings save operation. Dedicated controls handle them.
+    # Save customer ordering and M-PESA controls.
+    # The website emergency switch is intentionally preserved here so
+    # normal settings saves cannot accidentally take the public site offline.
+    for key in ("ordering_enabled", "mpesa_enabled"):
+        value = "1" if request.form.get(key) == "1" else "0"
+        setting = BusinessSetting.query.filter_by(key=key).first()
+
+        if setting is None:
+            setting = BusinessSetting(key=key, value=value)
+            db.session.add(setting)
+            old_value = ""
+        else:
+            old_value = setting.value
+            setting.value = value
+
+        if old_value != value:
+            record_admin_audit(
+                action=f"Changed {key}",
+                old_value=old_value,
+                new_value=value,
+            )
 
     db.session.commit()
 

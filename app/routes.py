@@ -1234,6 +1234,42 @@ def admin_customer_detail(user_id):
     )
 
 
+@main.post("/admin/customers/<int:user_id>/verification")
+def admin_customer_verification(user_id):
+    if not session.get("admin"):
+        abort(403)
+
+    customer = db.session.get(User, user_id)
+
+    if customer is None or customer.role != "customer":
+        abort(404)
+
+    if customer.email_verified:
+        return redirect(url_for("main.admin_customer_detail", user_id=customer.id))
+
+    customer.email_verified = True
+    customer.verification_token_hash = None
+    customer.verification_expires_at = None
+
+    record_admin_audit(
+        action=f"Customer email manually verified: {customer.id}",
+        old_value="unverified",
+        new_value="verified",
+    )
+
+    db.session.commit()
+
+    create_notification(
+        user_id=customer.id,
+        title="Email verification completed",
+        message="Your email address has been verified by the administrator.",
+        entity_type="customer",
+        entity_id=customer.id
+    )
+
+    return redirect(url_for("main.admin_customer_detail", user_id=customer.id))
+
+
 @main.post("/admin/customers/<int:user_id>/purchasing")
 def admin_customer_purchasing(user_id):
     if not session.get("admin"):

@@ -114,6 +114,27 @@ a{
             <strong>{{ customer.created_at }}</strong>
         </div>
 
+    {% if not customer.email_verified %}
+    <div style="margin-top:20px;padding:15px;border:1px solid #ccc;background:#fafafa;">
+        <strong>EMAIL VERIFICATION CONTROL</strong>
+        <p>This customer has not verified their email address.</p>
+
+        <form method="post"
+              action="{{ url_for('main.admin_customer_verification', user_id=customer.id) }}"
+              onsubmit="return confirm('Manually verify this customer email address?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">
+                VERIFY CUSTOMER EMAIL
+            </button>
+        </form>
+    </div>
+    {% else %}
+    <div style="margin-top:20px;padding:15px;border:1px solid #ccc;background:#fafafa;">
+        <strong>EMAIL VERIFICATION CONTROL</strong>
+        <p>Customer email is already verified.</p>
+    </div>
+    {% endif %}
+
     </div>
 
 </section>

@@ -100,6 +100,51 @@ def send_email(to, subject, body):
         return False
 
 
+def website_setting(key, default=""):
+    setting = BusinessSetting.query.filter_by(key=key).first()
+    return setting.value if setting else default
+
+
+@main.before_request
+def enforce_website_controls():
+    endpoint = request.endpoint or ""
+
+    # Always keep administrator access available so the site can be restored.
+    if endpoint.startswith("main.admin") or endpoint in {
+        "main.admin_login_page",
+        "main.admin_login",
+        "main.admin_logout",
+    }:
+        return None
+
+    # Emergency website kill-switch.
+    if website_setting("website_enabled", "1") != "1":
+        return (
+            "<!doctype html><html><head><meta charset='utf-8'>"
+            "<meta name='viewport' content='width=device-width,initial-scale=1'>"
+            "<title>Temporarily Offline | Danstar Gas Delivery</title>"
+            "</head><body style='font-family:Arial,sans-serif;text-align:center;"
+            "padding:80px 20px'>"
+            "<h1>Website Temporarily Offline</h1>"
+            "<p>Danstar Gas Delivery is temporarily unavailable for maintenance.</p>"
+            "<p>Please try again later or contact customer care.</p>"
+            "</body></html>",
+            503,
+        )
+
+    # Ordering kill-switch.
+    if endpoint == "main.create_order" and website_setting("ordering_enabled", "1") != "1":
+        return jsonify(
+            error="Online ordering is temporarily disabled. Please contact customer care."
+        ), 503
+
+    # M-PESA payment-reference kill-switch.
+    if endpoint == "main.submit_payment_reference" and website_setting("mpesa_enabled", "1") != "1":
+        return jsonify(
+            error="M-PESA payments are temporarily disabled. Please contact customer care."
+        ), 503
+
+
 def current_user():
     uid = session.get("user_id")
     return db.session.get(User, uid) if uid else None
@@ -1323,6 +1368,9 @@ def admin_business_settings():
         "business_tagline",
         "business_mission",
         "business_vision",
+        "website_enabled",
+        "ordering_enabled",
+        "mpesa_enabled",
     ]
 
     settings = {}
@@ -1363,6 +1411,22 @@ def save_business_settings():
                 key=key,
                 value=value
             )
+            db.session.add(setting)
+        else:
+            setting.value = value
+
+    control_defaults = {
+        "website_enabled": "0",
+        "ordering_enabled": "1",
+        "mpesa_enabled": "1",
+    }
+
+    for key, default in control_defaults.items():
+        value = "1" if request.form.get(key) == "1" else "0"
+        setting = BusinessSetting.query.filter_by(key=key).first()
+
+        if setting is None:
+            setting = BusinessSetting(key=key, value=value)
             db.session.add(setting)
         else:
             setting.value = value

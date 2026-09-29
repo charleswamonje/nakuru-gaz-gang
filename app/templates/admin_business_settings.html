@@ -187,6 +187,61 @@
     </div>
 
 
+    <div class="card">
+
+        <h2>OPERATIONAL CONTROLS</h2>
+
+        <p>
+            These controls affect the live website. The emergency switch
+            keeps the administrator area available so the website can be
+            restored.
+        </p>
+
+        <label>
+            <input
+                type="checkbox"
+                name="website_enabled"
+                value="1"
+                {% if settings.website_enabled == "1" %}checked{% endif %}
+            >
+            WEBSITE ONLINE
+        </label>
+
+        <p>
+            Turn this off for an emergency shutdown or maintenance.
+        </p>
+
+        <label>
+            <input
+                type="checkbox"
+                name="ordering_enabled"
+                value="1"
+                {% if settings.ordering_enabled == "1" %}checked{% endif %}
+            >
+            CUSTOMER ORDERING ENABLED
+        </label>
+
+        <p>
+            Controls whether customers can submit new orders.
+        </p>
+
+        <label>
+            <input
+                type="checkbox"
+                name="mpesa_enabled"
+                value="1"
+                {% if settings.mpesa_enabled == "1" %}checked{% endif %}
+            >
+            M-PESA PAYMENTS ENABLED
+        </label>
+
+        <p>
+            Controls M-PESA payment-reference submission.
+        </p>
+
+    </div>
+
+
     <div class="hero-actions">
 
         <button type="submit">

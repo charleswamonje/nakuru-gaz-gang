@@ -442,6 +442,12 @@ def create_order():
         return jsonify(error="Your order is empty."), 400
 
     user = current_user()
+
+    if user is not None and not user.purchasing_enabled:
+        return jsonify(
+            error="Your purchasing access is currently disabled. Please contact customer care."
+        ), 403
+
     order = Order(customer_name=name, phone=phone, delivery_area=area,
                   notes=clean_text(data.get("notes"), 1000), total=total,
                   user_id=user.id if user else None)

@@ -11,7 +11,18 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
 from . import db, limiter, csrf
-from .models import User, Product, Service, Order, OrderItem, ServiceRequest, CustomerFeedback, StatusHistory, Notification
+from .models import (
+    User,
+    Product,
+    Service,
+    Order,
+    OrderItem,
+    ServiceRequest,
+    CustomerFeedback,
+    StatusHistory,
+    Notification,
+    AdminAuditLog,
+)
 from .mpesa import get_mpesa_access_token
 from .models import BusinessSetting
 
@@ -1385,6 +1396,39 @@ def admin_business_settings():
     )
 
 
+def record_admin_audit(action, old_value="", new_value=""):
+    db.session.add(
+        AdminAuditLog(
+            admin_username=clean_text(
+                session.get("admin_username")
+                or current_app.config.get("ADMIN_USERNAME", "admin"),
+                120
+            ),
+            action=clean_text(action, 120),
+            old_value=clean_text(old_value, 500),
+            new_value=clean_text(new_value, 500),
+        )
+    )
+
+
+@main.get("/admin/audit-log")
+def admin_audit_log():
+    if not session.get("admin"):
+        abort(403)
+
+    audit_rows = (
+        AdminAuditLog.query
+        .order_by(AdminAuditLog.created_at.desc())
+        .limit(200)
+        .all()
+    )
+
+    return render_template(
+        "admin_audit_log.html",
+        audit_rows=audit_rows
+    )
+
+
 @main.post("/admin/business-settings")
 def save_business_settings():
     if not session.get("admin"):
@@ -1425,11 +1469,20 @@ def save_business_settings():
         value = "1" if request.form.get(key) == "1" else "0"
         setting = BusinessSetting.query.filter_by(key=key).first()
 
+        old_value = setting.value if setting else default
+
         if setting is None:
             setting = BusinessSetting(key=key, value=value)
             db.session.add(setting)
         else:
             setting.value = value
+
+        if old_value != value:
+            record_admin_audit(
+                action=f"Changed {key}",
+                old_value=old_value,
+                new_value=value,
+            )
 
     db.session.commit()
 

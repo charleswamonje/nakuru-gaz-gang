@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <title>Admin Audit Log | Danstar Gas Delivery</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<header class="site-header">
+
+    <a class="brand" href="{{ url_for('main.admin') }}">
+        DANSTAR GAS DELIVERY
+    </a>
+
+    <nav>
+        <a class="linkbutton" href="{{ url_for('main.admin') }}">
+            ADMIN DASHBOARD
+        </a>
+
+        <a class="linkbutton"
+           href="{{ url_for('main.admin_business_settings') }}">
+            BUSINESS SETTINGS
+        </a>
+    </nav>
+
+</header>
+
+<main>
+
+<section class="hero">
+    <p class="eyebrow">SECURITY</p>
+
+    <h1>ADMIN AUDIT LOG</h1>
+
+    <p class="hero-text">
+        Recent administrative changes to important business controls.
+    </p>
+</section>
+
+<section class="account-section">
+
+    <div class="card">
+
+        <h2>RECENT ADMINISTRATIVE ACTIONS</h2>
+
+        {% if audit_rows %}
+
+        <div style="overflow-x:auto;">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>TIME</th>
+                        <th>ADMIN</th>
+                        <th>ACTION</th>
+                        <th>OLD VALUE</th>
+                        <th>NEW VALUE</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for row in audit_rows %}
+                    <tr>
+                        <td>{{ row.created_at }}</td>
+                        <td>{{ row.admin_username }}</td>
+                        <td>{{ row.action }}</td>
+                        <td>{{ row.old_value or "—" }}</td>
+                        <td>{{ row.new_value or "—" }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <p>No administrative changes have been recorded yet.</p>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+</main>
+
+<footer>
+    <p>Danstar Gas Delivery — Administration</p>
+</footer>
+
+</body>
+</html>

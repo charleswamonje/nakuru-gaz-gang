@@ -138,6 +138,19 @@ class StatusHistory(db.Model):
     )
 
 
+class AdminAuditLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    admin_username = db.Column(db.String(120), nullable=False, index=True)
+    action = db.Column(db.String(120), nullable=False, index=True)
+    old_value = db.Column(db.String(500), default="", nullable=False)
+    new_value = db.Column(db.String(500), default="", nullable=False)
+    created_at = db.Column(
+        db.DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        index=True
+    )
+
+
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(

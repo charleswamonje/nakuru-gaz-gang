@@ -1123,3 +1123,134 @@ footer {
     }
 }
 
+
+/* ================= CUSTOMER PRODUCT CARDS ================= */
+
+.products-grid {
+    align-items: stretch;
+}
+
+.product-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.product-image-wrap {
+    margin: -20px -20px 16px;
+    min-height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+        radial-gradient(circle at center, rgba(77,184,255,.08), transparent 65%),
+        #050b15;
+    border-bottom: 1px solid rgba(77,184,255,.16);
+}
+
+.product-image-button {
+    display: block;
+    width: 100%;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+}
+
+.product-image-button:hover {
+    background: transparent;
+    box-shadow: none;
+}
+
+.product-image {
+    width: 100%;
+    height: 260px;
+    object-fit: contain;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+}
+
+.product-image-placeholder {
+    min-height: 260px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #6f8ba2;
+    letter-spacing: .12em;
+    font-weight: 800;
+    font-size: .78rem;
+}
+
+.product-image-placeholder small {
+    color: #4e6679;
+    letter-spacing: .04em;
+    font-weight: 500;
+}
+
+.product-category {
+    color: var(--danstar-cyan);
+    font-size: .68rem;
+    font-weight: 900;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.product-card h3 {
+    margin: 0 0 8px;
+    color: #eefaff;
+    font-size: 1.15rem;
+}
+
+.product-card > p {
+    color: #91aabd;
+    margin: 0 0 14px;
+}
+
+.product-price {
+    margin-top: auto;
+    color: #ffffff;
+    font-size: 1.35rem;
+    font-weight: 900;
+    letter-spacing: .02em;
+}
+
+.product-unit {
+    color: #6f8ba2 !important;
+    font-size: .78rem;
+    margin: 3px 0 16px !important;
+}
+
+.add-product {
+    width: 100%;
+    min-height: 46px;
+    margin-top: auto;
+    border-radius: 8px;
+    font-weight: 900;
+    letter-spacing: .05em;
+}
+
+@media (max-width: 650px) {
+    .product-image-wrap {
+        min-height: 220px;
+    }
+
+    .product-image,
+    .product-image-placeholder {
+        height: 220px;
+        min-height: 220px;
+    }
+
+    .product-card h3 {
+        font-size: 1.05rem;
+    }
+
+    .product-price {
+        font-size: 1.25rem;
+    }
+}
+

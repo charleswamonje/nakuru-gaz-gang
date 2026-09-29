@@ -912,7 +912,9 @@ def admin_update_order(order_id):
                 entity_id=order.id
             )
 
+    old_order_status = order.status
     old_payment_status = order.payment_status
+    old_payment_method = order.payment_method
     old_payment_reference = order.payment_reference
 
     order.status = new_status
@@ -938,6 +940,34 @@ def admin_update_order(order_id):
                 entity_type="order",
                 entity_id=order.id
             )
+
+    if old_order_status != new_status:
+        record_admin_audit(
+            action=f"Order status changed: {order.id}",
+            old_value=old_order_status,
+            new_value=new_status,
+        )
+
+    if old_payment_status != new_payment_status:
+        record_admin_audit(
+            action=f"Order payment status changed: {order.id}",
+            old_value=old_payment_status,
+            new_value=new_payment_status,
+        )
+
+    if old_payment_method != new_payment_method:
+        record_admin_audit(
+            action=f"Order payment method changed: {order.id}",
+            old_value=old_payment_method,
+            new_value=new_payment_method,
+        )
+
+    if old_payment_reference != new_payment_reference:
+        record_admin_audit(
+            action=f"Order payment reference changed: {order.id}",
+            old_value=old_payment_reference,
+            new_value=new_payment_reference,
+        )
 
     db.session.commit()
 
@@ -981,11 +1011,20 @@ def save_payment_settings():
 
     setting = BusinessSetting.query.filter_by(key="mpesa_till").first()
 
+    old_till = setting.value if setting else ""
+
     if setting is None:
         setting = BusinessSetting(key="mpesa_till", value=till)
         db.session.add(setting)
     else:
         setting.value = till
+
+    if old_till != till:
+        record_admin_audit(
+            action="M-PESA Till changed",
+            old_value=old_till,
+            new_value=till,
+        )
 
     db.session.commit()
 

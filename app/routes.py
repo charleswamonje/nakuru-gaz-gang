@@ -1276,11 +1276,17 @@ def admin_product_edit(product_id):
     if not product:
         abort(404)
 
+    old_product = (
+        f"{product.name} | price={product.price} | "
+        f"category={product.category} | unit={product.unit}"
+    )
+
     name = clean_text(request.form.get("name"), 120)
     category = clean_text(request.form.get("category"), 40)
     unit = clean_text(request.form.get("unit"), 40)
     description = clean_text(request.form.get("description"), 500)
     image_url = clean_text(request.form.get("image_url"), 500)
+
     uploaded_image = save_product_image(request.files.get("image"))
     if uploaded_image:
         image_url = uploaded_image
@@ -1300,6 +1306,18 @@ def admin_product_edit(product_id):
     product.description = description
     product.image_url = image_url
 
+    new_product = (
+        f"{product.name} | price={product.price} | "
+        f"category={product.category} | unit={product.unit}"
+    )
+
+    if old_product != new_product:
+        record_admin_audit(
+            action=f"Product edited: {product.id}",
+            old_value=old_product,
+            new_value=new_product,
+        )
+
     db.session.commit()
 
     return redirect(url_for("main.admin_products"))
@@ -1314,7 +1332,18 @@ def admin_product_toggle(product_id):
     if not product:
         abort(404)
 
+    old_value = "active" if product.active else "inactive"
+
     product.active = not product.active
+
+    new_value = "active" if product.active else "inactive"
+
+    record_admin_audit(
+        action=f"Product availability changed: {product.id}",
+        old_value=old_value,
+        new_value=new_value,
+    )
+
     db.session.commit()
 
     return redirect(url_for("main.admin_products"))
@@ -1345,14 +1374,24 @@ def admin_service_add():
     if not name or not category or price < 0:
         return "Please provide valid service details.", 400
 
-    db.session.add(Service(
+    service = Service(
         name=name,
         category=category,
         description=description,
         price=price,
         active=True
-    ))
+    )
+
+    db.session.add(service)
+    db.session.flush()
+
+    record_admin_audit(
+        action=f"Service added: {service.id}",
+        new_value=f"{service.name} | price={service.price}"
+    )
+
     db.session.commit()
+
     return redirect(url_for("main.admin_services"))
 
 
@@ -1364,6 +1403,11 @@ def admin_service_edit(service_id):
     service = db.session.get(Service, service_id)
     if not service:
         abort(404)
+
+    old_service = (
+        f"{service.name} | price={service.price} | "
+        f"category={service.category}"
+    )
 
     name = clean_text(request.form.get("name"), 160)
     category = clean_text(request.form.get("category"), 80)
@@ -1382,7 +1426,20 @@ def admin_service_edit(service_id):
     service.description = description
     service.price = price
 
+    new_service = (
+        f"{service.name} | price={service.price} | "
+        f"category={service.category}"
+    )
+
+    if old_service != new_service:
+        record_admin_audit(
+            action=f"Service edited: {service.id}",
+            old_value=old_service,
+            new_value=new_service,
+        )
+
     db.session.commit()
+
     return redirect(url_for("main.admin_services"))
 
 
@@ -1395,8 +1452,20 @@ def admin_service_toggle(service_id):
     if not service:
         abort(404)
 
+    old_value = "active" if service.active else "inactive"
+
     service.active = not service.active
+
+    new_value = "active" if service.active else "inactive"
+
+    record_admin_audit(
+        action=f"Service availability changed: {service.id}",
+        old_value=old_value,
+        new_value=new_value,
+    )
+
     db.session.commit()
+
     return redirect(url_for("main.admin_services"))
 
 

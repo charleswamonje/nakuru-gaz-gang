@@ -736,6 +736,7 @@ def admin_service_request_update(request_id):
         "cancelled"
     }
 
+    old_status = service_request.status
     status = clean_text(request.form.get("status"), 40)
 
     if status not in allowed_statuses:
@@ -764,6 +765,13 @@ def admin_service_request_update(request_id):
             )
 
     service_request.status = status
+
+    if old_status != status:
+        record_admin_audit(
+            action=f"Service request status changed: {service_request.id}",
+            old_value=old_status,
+            new_value=status,
+        )
 
     db.session.commit()
 
@@ -1251,12 +1259,21 @@ def admin_customer_feedback_status(feedback_id):
     if not feedback:
         abort(404)
 
+    old_status = feedback.status
     status = (request.form.get("status") or "").strip().lower()
 
     if status not in {"pending", "reviewed", "resolved"}:
         return "Invalid feedback status.", 400
 
     feedback.status = status
+
+    if old_status != status:
+        record_admin_audit(
+            action=f"Customer feedback status changed: {feedback.id}",
+            old_value=old_status,
+            new_value=status,
+        )
+
     db.session.commit()
 
     return redirect(url_for("main.admin_customer_activity"))

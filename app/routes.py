@@ -125,6 +125,7 @@ def enforce_website_controls():
         "main.admin_login_page",
         "main.admin_login",
         "main.admin_logout",
+        "main.restore_business_website",
     }:
         return None
 

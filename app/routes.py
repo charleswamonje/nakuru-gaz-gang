@@ -1867,30 +1867,8 @@ def save_business_settings():
         else:
             setting.value = value
 
-    control_defaults = {
-        "website_enabled": "1",
-        "ordering_enabled": "1",
-        "mpesa_enabled": "1",
-    }
-
-    for key, default in control_defaults.items():
-        value = "1" if request.form.get(key) == "1" else "0"
-        setting = BusinessSetting.query.filter_by(key=key).first()
-
-        old_value = setting.value if setting else default
-
-        if setting is None:
-            setting = BusinessSetting(key=key, value=value)
-            db.session.add(setting)
-        else:
-            setting.value = value
-
-        if old_value != value:
-            record_admin_audit(
-                action=f"Changed {key}",
-                old_value=old_value,
-                new_value=value,
-            )
+    # Operational controls are intentionally preserved by the normal
+    # business-settings save operation. Dedicated controls handle them.
 
     db.session.commit()
 

@@ -100,6 +100,24 @@ class BusinessSetting(db.Model):
 
 
 def seed_data():
+    default_settings = {
+        "business_name": "Danstar Gas Delivery",
+        "customer_care_phone": "0710525480",
+        "business_email": "redgroup@gmail.com",
+        "whatsapp_number": "254710525480",
+        "business_location": "Nakuru, Kenya",
+        "business_tagline": "RELIABLE ON TIME CLEAN AND STRONG.",
+        "business_mission": "To provide dependable water, gas delivery and authorized technical support to customers in Nakuru.",
+        "business_vision": "Reliable on time clean and strong.",
+        "website_enabled": "1",
+        "ordering_enabled": "1",
+        "mpesa_enabled": "1",
+    }
+
+    for key, value in default_settings.items():
+        if BusinessSetting.query.filter_by(key=key).first() is None:
+            db.session.add(BusinessSetting(key=key, value=value))
+
     if Product.query.count() == 0:
         db.session.add_all([
             Product(name="20L Drinking Water", category="Water", price=100, unit="container", description="Clean drinking water delivery."),

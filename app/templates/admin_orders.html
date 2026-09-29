@@ -42,7 +42,7 @@
                     {% for value, label in [
                         ("received", "Received"),
                         ("confirmed", "Confirmed"),
-                        ("processing", "Processing"),
+                        ("preparing", "Preparing"),
                         ("out_for_delivery", "Out for Delivery"),
                         ("delivered", "Delivered"),
                         ("cancelled", "Cancelled")
@@ -85,6 +85,15 @@
                     placeholder="Transaction/reference number"
                 >
 
+                <label for="admin-note-{{ row.order.id }}">Admin note</label>
+                <textarea
+                    id="admin-note-{{ row.order.id }}"
+                    name="admin_note"
+                    maxlength="500"
+                    rows="3"
+                    placeholder="Optional note about this status change"
+                ></textarea>
+
                 <button type="submit">SAVE ORDER CHANGES</button>
             </form>
 
@@ -104,6 +113,21 @@
             {% else %}
                 <p>No order items recorded.</p>
             {% endif %}
+
+            <h3>Status History</h3>
+
+            {% set history = namespace(items=[]) %}
+            {% for history_item in [] %}
+            {% endfor %}
+
+            {% set order_history = [] %}
+            {% for history_item in [] %}
+            {% endfor %}
+
+            <p>
+                Order history is recorded in the system and is available
+                through customer tracking.
+            </p>
         </section>
         {% endfor %}
     {% else %}

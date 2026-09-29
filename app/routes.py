@@ -914,6 +914,9 @@ def admin_update_order(order_id):
     new_payment_reference = clean_text(
         request.form.get("payment_reference", order.payment_reference), 120
     )
+    admin_note = clean_text(
+        request.form.get("admin_note", ""), 500
+    )
 
     if new_status not in allowed_statuses:
         abort(400)
@@ -930,7 +933,7 @@ def admin_update_order(order_id):
                 entity_type="order",
                 entity_id=order.id,
                 status=new_status,
-                note="Order status updated by admin."
+                note=admin_note or "Order status updated by admin."
             )
         )
 

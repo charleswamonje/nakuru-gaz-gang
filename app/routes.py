@@ -1234,6 +1234,45 @@ def admin_customer_detail(user_id):
     )
 
 
+@main.post("/admin/customers/<int:user_id>/resend-verification")
+def admin_customer_resend_verification(user_id):
+    if not session.get("admin"):
+        abort(403)
+
+    customer = db.session.get(User, user_id)
+
+    if customer is None or customer.role != "customer":
+        abort(404)
+
+    if customer.email_verified:
+        return redirect(url_for("main.admin_customer_detail", user_id=customer.id))
+
+    raw = secrets.token_urlsafe(32)
+
+    customer.verification_token_hash = token_hash(raw)
+    customer.verification_expires_at = datetime.now(timezone.utc) + timedelta(hours=24)
+
+    db.session.commit()
+
+    link = url_for("main.verify_email", token=raw, _external=True)
+
+    sent = send_email(
+        customer.email,
+        "Verify your Danstar Gas Delivery account",
+        f"Please verify your email within 24 hours:\n\n{link}"
+    )
+
+    record_admin_audit(
+        action=f"Customer verification email resent: {customer.id}",
+        old_value="unverified",
+        new_value="sent" if sent else "delivery_failed",
+    )
+
+    db.session.commit()
+
+    return redirect(url_for("main.admin_customer_detail", user_id=customer.id))
+
+
 @main.post("/admin/customers/<int:user_id>/verification")
 def admin_customer_verification(user_id):
     if not session.get("admin"):

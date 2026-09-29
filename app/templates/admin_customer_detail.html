@@ -127,6 +127,16 @@ a{
                 VERIFY CUSTOMER EMAIL
             </button>
         </form>
+
+        <form method="post"
+              action="{{ url_for('main.admin_customer_resend_verification', user_id=customer.id) }}"
+              style="margin-top:10px;"
+              onsubmit="return confirm('Resend the verification email to this customer?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">
+                RESEND VERIFICATION EMAIL
+            </button>
+        </form>
     </div>
     {% else %}
     <div style="margin-top:20px;padding:15px;border:1px solid #ccc;background:#fafafa;">

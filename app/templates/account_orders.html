@@ -118,6 +118,32 @@
                 KSh {{ '%.2f'|format(row.order.total|float) }}
             </p>
 
+            {% if row.history %}
+            <div class="tracking-history" style="margin-top:18px;">
+                <h3>Status history</h3>
+
+                <div class="tracking-history-list">
+                    {% for history_item in row.history %}
+                    <div class="tracking-history-item">
+                        <strong>
+                            {{ history_item.status|replace('_', ' ')|title }}
+                        </strong>
+
+                        {% if history_item.created_at %}
+                        <span>
+                            {{ history_item.created_at.strftime('%d %b %Y, %H:%M') }}
+                        </span>
+                        {% endif %}
+
+                        {% if history_item.note %}
+                        <p>{{ history_item.note }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
             <a
                 class="linkbutton"
                 href="{{ url_for('main.index', order=row.order.id) }}#order-tracking"

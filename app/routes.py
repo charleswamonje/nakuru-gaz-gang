@@ -1185,6 +1185,55 @@ def admin_customers():
     )
 
 
+@main.get("/admin/customers/<int:user_id>")
+def admin_customer_detail(user_id):
+    if not session.get("admin"):
+        abort(403)
+
+    customer = db.session.get(User, user_id)
+
+    if customer is None or customer.role != "customer":
+        abort(404)
+
+    orders = (
+        Order.query
+        .filter_by(user_id=customer.id)
+        .order_by(Order.created_at.desc())
+        .all()
+    )
+
+    service_requests = (
+        ServiceRequest.query
+        .filter_by(user_id=customer.id)
+        .order_by(ServiceRequest.created_at.desc())
+        .all()
+    )
+
+    feedback = (
+        CustomerFeedback.query
+        .filter_by(user_id=customer.id)
+        .order_by(CustomerFeedback.created_at.desc())
+        .all()
+    )
+
+    notifications = (
+        Notification.query
+        .filter_by(user_id=customer.id)
+        .order_by(Notification.created_at.desc())
+        .limit(20)
+        .all()
+    )
+
+    return render_template(
+        "admin_customer_detail.html",
+        customer=customer,
+        orders=orders,
+        service_requests=service_requests,
+        feedback=feedback,
+        notifications=notifications,
+    )
+
+
 @main.post("/admin/customers/<int:user_id>/purchasing")
 def admin_customer_purchasing(user_id):
     if not session.get("admin"):

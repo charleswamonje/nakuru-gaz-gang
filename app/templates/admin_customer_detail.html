@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Danstar Gas Delivery | Customer Details</title>
+
+<style>
+body{
+    margin:0;
+    background:#f4f4f4;
+    color:#111;
+    font-family:"Courier New",monospace;
+}
+
+header{
+    background:#111;
+    color:#fff;
+    padding:20px;
+}
+
+main{
+    width:94%;
+    max-width:1200px;
+    margin:30px auto;
+}
+
+.card{
+    background:#fff;
+    border:1px solid #ccc;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:12px;
+}
+
+.stat{
+    border:1px solid #ccc;
+    padding:15px;
+    background:#fafafa;
+}
+
+.stat strong{
+    display:block;
+    font-size:22px;
+    margin-top:8px;
+}
+
+.status{
+    font-weight:bold;
+    text-transform:uppercase;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    border:1px solid #ccc;
+    padding:10px;
+    text-align:left;
+    vertical-align:top;
+}
+
+th{
+    background:#eee;
+}
+
+a{
+    color:#111;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <strong>DANSTAR GAS DELIVERY — ADMIN</strong>
+    <div>CUSTOMER DETAILS</div>
+</header>
+
+<main>
+
+<section class="card">
+
+    <h1>Customer #{{ customer.id }}</h1>
+
+    <div class="grid">
+
+        <div class="stat">
+            EMAIL
+            <strong>{{ customer.email }}</strong>
+        </div>
+
+        <div class="stat">
+            EMAIL VERIFIED
+            <strong>{{ "YES" if customer.email_verified else "NO" }}</strong>
+        </div>
+
+        <div class="stat">
+            PURCHASING
+            <strong>{{ "ENABLED" if customer.purchasing_enabled else "DISABLED" }}</strong>
+        </div>
+
+        <div class="stat">
+            REGISTERED
+            <strong>{{ customer.created_at }}</strong>
+        </div>
+
+    </div>
+
+</section>
+
+<section class="card">
+    <h2>Orders ({{ orders|length }})</h2>
+
+    {% if orders %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Payment</th>
+            <th>Total</th>
+        </tr>
+
+        {% for order in orders %}
+        <tr>
+            <td>#{{ order.id }}</td>
+            <td>{{ order.created_at }}</td>
+            <td>{{ order.status }}</td>
+            <td>{{ order.payment_status }}</td>
+            <td>{{ order.total }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No orders recorded for this customer.</p>
+    {% endif %}
+</section>
+
+<section class="card">
+    <h2>Service Requests ({{ service_requests|length }})</h2>
+
+    {% if service_requests %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Service</th>
+            <th>Status</th>
+            <th>Area</th>
+        </tr>
+
+        {% for item in service_requests %}
+        <tr>
+            <td>#{{ item.id }}</td>
+            <td>{{ item.created_at }}</td>
+            <td>#{{ item.service_id }}</td>
+            <td>{{ item.status }}</td>
+            <td>{{ item.area }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No service requests recorded for this customer.</p>
+    {% endif %}
+</section>
+
+<section class="card">
+    <h2>Feedback ({{ feedback|length }})</h2>
+
+    {% if feedback %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Message</th>
+        </tr>
+
+        {% for item in feedback %}
+        <tr>
+            <td>#{{ item.id }}</td>
+            <td>{{ item.created_at }}</td>
+            <td>{{ item.status }}</td>
+            <td>{{ item.message }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No feedback recorded for this customer.</p>
+    {% endif %}
+</section>
+
+<section class="card">
+    <h2>Recent Notifications</h2>
+
+    {% if notifications %}
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Title</th>
+            <th>Message</th>
+        </tr>
+
+        {% for item in notifications %}
+        <tr>
+            <td>{{ item.created_at }}</td>
+            <td>{{ item.title }}</td>
+            <td>{{ item.message }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No notifications recorded for this customer.</p>
+    {% endif %}
+</section>
+
+<section class="card">
+    <a href="{{ url_for('main.admin_customers') }}">
+        BACK TO CUSTOMER CONTROL
+    </a>
+    &nbsp; | &nbsp;
+    <a href="{{ url_for('main.admin') }}">
+        ADMIN CONTROL CENTRE
+    </a>
+</section>
+
+</main>
+
+</body>
+</html>

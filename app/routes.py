@@ -1150,16 +1150,27 @@ def admin_customer_purchasing(user_id):
 
     action = clean_text(request.form.get("action"), 20).lower()
 
+    old_value = "enabled" if customer.purchasing_enabled else "disabled"
+
     if action == "disable":
         customer.purchasing_enabled = False
         message = "Purchasing disabled by administrator."
+        new_value = "disabled"
 
     elif action == "enable":
         customer.purchasing_enabled = True
         message = "Purchasing enabled by administrator."
+        new_value = "enabled"
 
     else:
         return "Invalid customer purchasing action.", 400
+
+    if old_value != new_value:
+        record_admin_audit(
+            action=f"Customer purchasing access changed: {customer.id}",
+            old_value=old_value,
+            new_value=new_value,
+        )
 
     db.session.commit()
 

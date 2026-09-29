@@ -1416,7 +1416,7 @@ def save_business_settings():
             setting.value = value
 
     control_defaults = {
-        "website_enabled": "0",
+        "website_enabled": "1",
         "ordering_enabled": "1",
         "mpesa_enabled": "1",
     }

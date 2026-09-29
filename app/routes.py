@@ -1273,6 +1273,42 @@ def admin_customer_resend_verification(user_id):
     return redirect(url_for("main.admin_customer_detail", user_id=customer.id))
 
 
+@main.post("/admin/customers/<int:user_id>/password-reset")
+def admin_customer_password_reset(user_id):
+    if not session.get("admin"):
+        abort(403)
+
+    customer = db.session.get(User, user_id)
+
+    if customer is None or customer.role != "customer":
+        abort(404)
+
+    raw = secrets.token_urlsafe(32)
+
+    customer.reset_token_hash = token_hash(raw)
+    customer.reset_expires_at = datetime.now(timezone.utc) + timedelta(minutes=30)
+
+    db.session.commit()
+
+    link = url_for("main.reset_password_page", token=raw, _external=True)
+
+    sent = send_email(
+        customer.email,
+        "Danstar Gas Delivery password reset",
+        f"Your password-reset link expires in 30 minutes:\n\n{link}"
+    )
+
+    record_admin_audit(
+        action=f"Customer password reset email sent: {customer.id}",
+        old_value="not_requested",
+        new_value="sent" if sent else "delivery_failed",
+    )
+
+    db.session.commit()
+
+    return redirect(url_for("main.admin_customer_detail", user_id=customer.id))
+
+
 @main.post("/admin/customers/<int:user_id>/verification")
 def admin_customer_verification(user_id):
     if not session.get("admin"):

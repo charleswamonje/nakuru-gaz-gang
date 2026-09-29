@@ -145,6 +145,20 @@ a{
     </div>
     {% endif %}
 
+    <div style="margin-top:20px;padding:15px;border:1px solid #ccc;background:#fafafa;">
+        <strong>PASSWORD RESET CONTROL</strong>
+        <p>Send this customer a secure password-reset link. The link expires in 30 minutes.</p>
+
+        <form method="post"
+              action="{{ url_for('main.admin_customer_password_reset', user_id=customer.id) }}"
+              onsubmit="return confirm('Send a password-reset email to this customer?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">
+                SEND PASSWORD RESET EMAIL
+            </button>
+        </form>
+    </div>
+
     </div>
 
 </section>

@@ -780,16 +780,40 @@ def admin_login_page():
 def admin_login():
     data = request.form
     configured_password = current_app.config.get("ADMIN_PASSWORD", "")
-    if configured_password and data.get("username") == current_app.config["ADMIN_USERNAME"] and data.get("password") == configured_password:
+
+    if (
+        configured_password
+        and data.get("username") == current_app.config["ADMIN_USERNAME"]
+        and data.get("password") == configured_password
+    ):
+        record_admin_audit(
+            action="Admin login",
+            new_value="Successful"
+        )
+
         session.clear()
         session["admin"] = True
+        session["admin_username"] = current_app.config["ADMIN_USERNAME"]
         session.permanent = True
+
         return "Logged in"
+
+    record_admin_audit(
+        action="Admin login",
+        new_value="Failed"
+    )
+
     abort(401)
 
 
 @main.post("/admin/logout")
 def admin_logout():
+    if session.get("admin"):
+        record_admin_audit(
+            action="Admin logout",
+            new_value="Successful"
+        )
+
     session.clear()
     return "Logged out"
 

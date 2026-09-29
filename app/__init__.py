@@ -10,6 +10,7 @@ from flask_limiter.util import get_remote_address
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 from sqlalchemy.pool import NullPool
+from sqlalchemy import text
 
 load_dotenv()
 
@@ -118,6 +119,29 @@ def create_app():
     with app.app_context():
         from . import models
         db.create_all()
+
+        # Safe migration for existing databases.
+        from sqlalchemy import inspect
+
+        inspector = inspect(db.engine)
+        user_columns = {
+            column["name"]
+            for column in inspector.get_columns("user")
+        }
+
+        if "purchasing_enabled" not in user_columns:
+            if db.engine.dialect.name == "sqlite":
+                db.session.execute(text(
+                    'ALTER TABLE "user" ADD COLUMN purchasing_enabled '
+                    'BOOLEAN NOT NULL DEFAULT 1'
+                ))
+            else:
+                db.session.execute(text(
+                    'ALTER TABLE "user" ADD COLUMN purchasing_enabled '
+                    'BOOLEAN NOT NULL DEFAULT TRUE'
+                ))
+            db.session.commit()
+
         models.seed_data()
 
     return app

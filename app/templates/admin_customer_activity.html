@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Danstar Gas Delivery — Customer Activity</title>
+
+<style>
+body{
+    margin:0;
+    background:#f4f4f4;
+    color:#111;
+    font-family:"Courier New",monospace;
+}
+
+header{
+    background:#111;
+    color:#fff;
+    padding:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+}
+
+main{
+    width:94%;
+    max-width:1200px;
+    margin:30px auto;
+}
+
+h1,h2{
+    margin-top:0;
+}
+
+.back{
+    display:inline-block;
+    margin-bottom:20px;
+    padding:10px 14px;
+    border:1px solid #111;
+    color:#111;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.feedback-list{
+    display:grid;
+    gap:18px;
+}
+
+.feedback-card{
+    background:#fff;
+    border:1px solid #ccc;
+    padding:20px;
+}
+
+.feedback-top{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    flex-wrap:wrap;
+    border-bottom:1px solid #ddd;
+    padding-bottom:12px;
+    margin-bottom:14px;
+}
+
+.customer-name{
+    font-size:20px;
+    font-weight:bold;
+}
+
+.customer-phone{
+    margin-top:5px;
+    color:#555;
+}
+
+.feedback-message{
+    white-space:pre-wrap;
+    line-height:1.5;
+    margin:16px 0;
+}
+
+.feedback-meta{
+    color:#666;
+    font-size:13px;
+    margin-bottom:12px;
+}
+
+.status-form{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.status-form select,
+.status-form button{
+    padding:9px 12px;
+    font-family:inherit;
+}
+
+.status-form button{
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.empty{
+    background:#fff;
+    border:1px solid #ccc;
+    padding:25px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>DANSTAR GAS DELIVERY — CUSTOMER ACTIVITY</h1>
+
+    <form method="POST" action="{{ url_for('main.admin_logout') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit">LOG OUT</button>
+    </form>
+</header>
+
+<main>
+
+<a class="back" href="{{ url_for('main.admin') }}">
+    ← BACK TO ADMIN DASHBOARD
+</a>
+
+<h2>Customer Feedback</h2>
+
+<p>
+    Review customer feedback and update its status.
+</p>
+
+{% if feedback %}
+
+<div class="feedback-list">
+
+{% for item in feedback %}
+
+<article class="feedback-card">
+
+    <div class="feedback-top">
+
+        <div>
+            <div class="customer-name">
+                {{ item.name }}
+            </div>
+
+            {% if item.phone %}
+            <div class="customer-phone">
+                {{ item.phone }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div>
+            <strong>{{ item.status|upper }}</strong>
+        </div>
+
+    </div>
+
+    <div class="feedback-message">
+        {{ item.message }}
+    </div>
+
+    <div class="feedback-meta">
+        Received:
+        {{ item.created_at.strftime("%Y-%m-%d %H:%M UTC") if item.created_at else "Unknown" }}
+
+        {% if item.user_id %}
+        · Registered customer ID: {{ item.user_id }}
+        {% else %}
+        · Guest customer
+        {% endif %}
+    </div>
+
+    <form
+        class="status-form"
+        method="POST"
+        action="{{ url_for('main.admin_customer_feedback_status', feedback_id=item.id) }}"
+    >
+
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="{{ csrf_token() }}"
+        >
+
+        <label for="status-{{ item.id }}">STATUS:</label>
+
+        <select id="status-{{ item.id }}" name="status">
+            <option value="pending" {% if item.status == "pending" %}selected{% endif %}>
+                Pending
+            </option>
+            <option value="reviewed" {% if item.status == "reviewed" %}selected{% endif %}>
+                Reviewed
+            </option>
+            <option value="resolved" {% if item.status == "resolved" %}selected{% endif %}>
+                Resolved
+            </option>
+        </select>
+
+        <button type="submit">
+            UPDATE STATUS
+        </button>
+
+    </form>
+
+</article>
+
+{% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="empty">
+    No customer feedback has been received yet.
+</div>
+
+{% endif %}
+
+</main>
+
+</body>
+</html>

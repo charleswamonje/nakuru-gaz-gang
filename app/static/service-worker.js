@@ -2,7 +2,6 @@ const CACHE_NAME = 'muiruri-gas-v10';
 
 const APP_SHELL = [
   '/',
-  '/static/manifest.webmanifest',
   '/static/css/style.css',
   '/static/js/app.js',
   '/static/icons/icon-192.png',

@@ -873,9 +873,17 @@ def admin_orders():
                 "line_total": item.quantity * item.unit_price,
             })
 
+        history = (
+            StatusHistory.query
+            .filter_by(entity_type="order", entity_id=order.id)
+            .order_by(StatusHistory.created_at.asc(), StatusHistory.id.asc())
+            .all()
+        )
+
         order_rows.append({
             "order": order,
-            "items": item_rows
+            "items": item_rows,
+            "history": history
         })
 
     return render_template("admin_orders.html", order_rows=order_rows)

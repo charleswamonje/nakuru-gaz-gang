@@ -116,18 +116,22 @@
 
             <h3>Status History</h3>
 
-            {% set history = namespace(items=[]) %}
-            {% for history_item in [] %}
-            {% endfor %}
-
-            {% set order_history = [] %}
-            {% for history_item in [] %}
-            {% endfor %}
-
-            <p>
-                Order history is recorded in the system and is available
-                through customer tracking.
-            </p>
+            {% if row.history %}
+                <div class="status-history">
+                    {% for history_item in row.history %}
+                    <div class="card" style="margin:8px 0;padding:12px;">
+                        <strong>{{ history_item.status|replace("_", " ")|title }}</strong>
+                        <br>
+                        <small>{{ history_item.created_at }}</small>
+                        {% if history_item.note %}
+                        <p style="margin:6px 0 0;">{{ history_item.note }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No status history recorded yet.</p>
+            {% endif %}
         </section>
         {% endfor %}
     {% else %}

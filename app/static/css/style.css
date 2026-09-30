@@ -1254,3 +1254,63 @@ footer {
     }
 }
 
+
+/* ================= PRODUCT CATALOGUE POLISH ================= */
+
+.product-card {
+    overflow: hidden;
+    transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(77,184,255,.32);
+    box-shadow: 0 14px 34px rgba(0,0,0,.28);
+}
+
+.product-image-wrap {
+    position: relative;
+}
+
+.product-image-button {
+    cursor: zoom-in;
+}
+
+.product-image-button:focus-visible {
+    outline: 2px solid var(--danstar-cyan);
+    outline-offset: -2px;
+}
+
+.product-image-placeholder {
+    position: relative;
+    background:
+        linear-gradient(135deg, rgba(77,184,255,.06), rgba(255,255,255,.015)),
+        #050b15;
+}
+
+.product-image-placeholder::before {
+    content: "PHOTO";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    margin-bottom: 4px;
+    border: 1px dashed rgba(77,184,255,.35);
+    border-radius: 50%;
+    color: #6f8ba2;
+    font-size: .62rem;
+    letter-spacing: .12em;
+}
+
+.product-card .add-product {
+    margin-top: 4px;
+}
+
+@media (max-width: 650px) {
+    .product-card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+}
+

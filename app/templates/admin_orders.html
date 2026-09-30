@@ -34,7 +34,7 @@
             <p><strong>Received:</strong> {{ row.order.created_at }}</p>
 
             <h3>Admin Controls</h3>
-            <form method="post" action="{{ url_for('main.admin_update_order', order_id=row.order.id) }}">
+            <form class="admin-order-form" method="post" action="{{ url_for('main.admin_update_order', order_id=row.order.id) }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                 <label for="status-{{ row.order.id }}">Order status</label>

@@ -1314,3 +1314,41 @@ footer {
     }
 }
 
+
+/* ================= ADMIN ORDER CONTROLS ================= */
+
+.admin-order-form {
+    display: grid;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.admin-order-form label {
+    display: block;
+    margin-bottom: 4px;
+    color: #b9d2e2;
+    font-weight: 800;
+}
+
+.admin-order-form select,
+.admin-order-form input,
+.admin-order-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.admin-order-form button {
+    margin-top: 4px;
+    width: 100%;
+    min-height: 46px;
+}
+
+.status-history {
+    display: grid;
+    gap: 8px;
+}
+
+.status-history .card {
+    background: rgba(255,255,255,.025);
+}
+

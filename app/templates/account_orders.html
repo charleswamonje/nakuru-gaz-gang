@@ -151,6 +151,20 @@
                 TRACK THIS ORDER
             </a>
 
+            <button
+                type="button"
+                class="linkbutton"
+                data-reorder-order="{{ row.order.id }}"
+            >
+                REORDER THESE ITEMS
+            </button>
+
+            <p
+                class="reorder-result"
+                id="reorder-result-{{ row.order.id }}"
+                aria-live="polite"
+            ></p>
+
             <a
                 class="linkbutton"
                 href="{{ url_for('main.index') }}"
@@ -184,6 +198,36 @@
 </section>
 
 </main>
+
+<script>
+document.querySelectorAll('[data-reorder-order]').forEach(button => {
+    button.addEventListener('click', async () => {
+        const orderId = button.dataset.reorderOrder;
+        const result = document.getElementById(`reorder-result-${orderId}`);
+
+        button.disabled = true;
+        result.textContent = 'Preparing reorder...';
+
+        try {
+            const response = await fetch(`/api/orders/${orderId}/reorder`);
+            const data = await response.json();
+
+            if (!response.ok) {
+                result.textContent = data.error || 'Unable to prepare reorder.';
+                button.disabled = false;
+                return;
+            }
+
+            localStorage.setItem('reorderItems', JSON.stringify(data.items));
+            window.location.href = '/';
+        } catch (error) {
+            console.error(error);
+            result.textContent = 'Network error. Please try again.';
+            button.disabled = false;
+        }
+    });
+});
+</script>
 
 </body>
 </html>

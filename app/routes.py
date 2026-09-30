@@ -363,8 +363,7 @@ def mark_notification_read(notification_id):
     if user is None:
         return jsonify(error="Authentication required."), 401
 
-    notification = db.session.get(Notification,
-    CustomerFeedback, notification_id)
+    notification = db.session.get(Notification, notification_id)
 
     if notification is None or notification.user_id != user.id:
         return jsonify(error="Notification not found."), 404
@@ -538,6 +537,59 @@ def create_order():
     till_setting = BusinessSetting.query.filter_by(key="mpesa_till").first()
     mpesa_till = till_setting.value if till_setting else ""
     return jsonify(message="Order received.", order_id=order.id, payment_status=order.payment_status, mpesa_till=mpesa_till)
+
+
+@main.get("/api/orders/<int:order_id>/reorder")
+@limiter.limit("20 per minute")
+def reorder_order(order_id):
+    user = current_user()
+
+    if user is None or user.role != "customer":
+        return jsonify(error="Authentication required."), 401
+
+    order = db.session.get(Order, order_id)
+
+    if order is None or order.user_id != user.id:
+        return jsonify(error="Order not found."), 404
+
+    order_items = OrderItem.query.filter_by(order_id=order.id).all()
+
+    if not order_items:
+        return jsonify(error="This order has no items to reorder."), 400
+
+    product_ids = [item.product_id for item in order_items]
+
+    products = (
+        Product.query
+        .filter(Product.id.in_(set(product_ids)), Product.active.is_(True))
+        .all()
+    )
+
+    product_map = {product.id: product for product in products}
+
+    items = []
+
+    for item in order_items:
+        product = product_map.get(item.product_id)
+
+        if product is None:
+            continue
+
+        items.append({
+            "product_id": product.id,
+            "name": product.name,
+            "quantity": item.quantity,
+            "unit_price": float(product.price)
+        })
+
+    if not items:
+        return jsonify(error="None of the products in this order are currently available."), 409
+
+    return jsonify(
+        message="Reorder items ready.",
+        order_id=order.id,
+        items=items
+    )
 
 
 @main.get("/api/orders/<int:order_id>/status")

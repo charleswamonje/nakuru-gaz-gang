@@ -34,6 +34,51 @@
     }
   };
 
+  function loadReorderItems(){
+    const raw = localStorage.getItem('reorderItems');
+
+    if(!raw) return;
+
+    localStorage.removeItem('reorderItems');
+
+    try{
+      const items = JSON.parse(raw);
+
+      if(!Array.isArray(items) || !items.length) return;
+
+      items.forEach(item => {
+        const found = cart.find(
+          x => x.product_id === item.product_id
+        );
+
+        if(found){
+          found.quantity += Number(item.quantity) || 0;
+        }else{
+          cart.push({
+            product_id: item.product_id,
+            name: item.name,
+            price: Number(item.unit_price) || 0,
+            unit: '',
+            quantity: Number(item.quantity) || 1
+          });
+        }
+      });
+
+      renderCart();
+
+      const orderSection = document.getElementById("order");
+
+      if(orderSection){
+        orderSection.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+    }catch(error){
+      console.error('Unable to load reorder:', error);
+    }
+  }
+
   function renderCart(){
     const el = document.getElementById('cart');
     if(!el) return;
@@ -124,6 +169,8 @@
       }[c])
     );
   }
+
+  loadReorderItems();
 
   window.chooseService = function(id){
     const s = document.getElementById('serviceSelect');

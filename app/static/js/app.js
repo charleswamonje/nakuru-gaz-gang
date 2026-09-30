@@ -390,6 +390,23 @@
     )
   );
 
+  async function post(url, body) {
+    const csrfToken =
+      document.querySelector('meta[name="csrf-token"]')?.content || '';
+
+    const headers = {};
+
+    if (csrfToken) {
+      headers['X-CSRFToken'] = csrfToken;
+    }
+
+    return fetch(url, {
+      method: 'POST',
+      headers,
+      body
+    });
+  }
+
   async function sendForm(form,url,resultId){
     const result = document.getElementById(resultId);
 

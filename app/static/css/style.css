@@ -1720,3 +1720,116 @@ footer {
     }
 }
 
+
+/* ================= ADMIN ORDER MANAGEMENT - SCAN REFINEMENT ================= */
+
+.admin-order-card {
+    padding: 22px;
+}
+
+.admin-order-top h2 {
+    font-size: 1.15rem;
+}
+
+.admin-order-summary {
+    grid-template-columns: 1.35fr 1fr 1fr;
+    gap: 10px;
+    margin: 14px 0;
+}
+
+.admin-order-summary > div {
+    min-height: 92px;
+    padding: 13px 14px;
+}
+
+.admin-order-summary h3 {
+    margin-bottom: 7px;
+}
+
+.admin-order-summary p {
+    margin: 4px 0;
+    line-height: 1.4;
+}
+
+.order-financial > strong {
+    font-size: 1.35rem;
+}
+
+.admin-order-section {
+    margin-top: 16px;
+    padding-top: 16px;
+}
+
+.admin-order-section > h3 {
+    margin-bottom: 12px;
+}
+
+.admin-control-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.admin-field-wide {
+    grid-column: 1 / -1;
+}
+
+.admin-field select,
+.admin-field input,
+.admin-field textarea {
+    padding: 10px 11px;
+    border-radius: 7px;
+}
+
+.admin-field textarea {
+    min-height: 78px;
+}
+
+.admin-save-order {
+    margin-top: 10px;
+    padding: 11px 14px;
+}
+
+.order-items-list {
+    gap: 6px;
+}
+
+.order-item-row {
+    padding: 11px 13px;
+    border-radius: 7px;
+}
+
+.order-item-row strong {
+    color: #eefaff;
+}
+
+.order-item-row span {
+    font-size: .78rem;
+}
+
+.status-history-item {
+    padding-bottom: 15px;
+}
+
+.status-history-item p {
+    line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+    .admin-control-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .admin-order-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-control-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-order-summary > div {
+        min-height: auto;
+    }
+}

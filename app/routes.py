@@ -535,7 +535,9 @@ def create_order():
     db.session.flush()
     db.session.add_all([OrderItem(order_id=order.id, product_id=p.id, quantity=q, unit_price=p.price) for p, q in clean])
     db.session.commit()
-    return jsonify(message="Order received.", order_id=order.id, payment_number="0710525480")
+    till_setting = BusinessSetting.query.filter_by(key="mpesa_till").first()
+    mpesa_till = till_setting.value if till_setting else ""
+    return jsonify(message="Order received.", order_id=order.id, payment_status=order.payment_status, mpesa_till=mpesa_till)
 
 
 @main.get("/api/orders/<int:order_id>/status")

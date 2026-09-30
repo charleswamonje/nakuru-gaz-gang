@@ -151,7 +151,7 @@
       return;
     }
 
-    result.textContent = 'Submitting order and starting M-Pesa payment...';
+    result.textContent = 'Submitting order...';
 
     try{
       const r = await post(

@@ -546,8 +546,17 @@ def order_status(order_id):
     phone = clean_text(request.args.get("phone"), 30)
     if not phone:
         return jsonify(error="Phone number is required."), 400
+
+    def normalize_kenyan_phone(value):
+        value = clean_text(value, 30).replace(" ", "").replace("-", "")
+        if value.startswith("+254"):
+            return "0" + value[4:]
+        if value.startswith("254") and len(value) == 12:
+            return "0" + value[3:]
+        return value
+
     order = db.session.get(Order, order_id)
-    if order is None or order.phone != phone:
+    if order is None or normalize_kenyan_phone(order.phone) != normalize_kenyan_phone(phone):
         return jsonify(error="Order not found."), 404
 
     user = current_user()

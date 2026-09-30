@@ -1,4 +1,4 @@
-const CACHE_NAME = 'danstar-gas-v8';
+const CACHE_NAME = 'muiruri-gas-v9';
 
 const APP_SHELL = [
   '/',

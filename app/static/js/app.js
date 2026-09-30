@@ -598,8 +598,9 @@ if (trackOrderButton) {
         ${historyHtml}
 
         <div class="tracking-payment">
-          <strong>Payment:</strong>
-          ${data.payment_status || 'pending'}
+          <strong>Payment status:</strong>
+          ${String(data.payment_status || 'pending').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+          ${data.payment_method ? `<br><strong>Payment method:</strong> ${String(data.payment_method).replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}` : ''}
         </div>
       `;
 

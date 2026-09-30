@@ -1,4 +1,4 @@
-const CACHE_NAME = 'muiruri-gas-v9';
+const CACHE_NAME = 'muiruri-gas-v10';
 
 const APP_SHELL = [
   '/',
@@ -16,6 +16,7 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(APP_SHELL))
       .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', event => {
@@ -27,6 +28,7 @@ self.addEventListener('activate', event => {
           .map(key => caches.delete(key))
       )
     ).then(() => self.clients.claim())
+  );
 });
 
 self.addEventListener('fetch', event => {
@@ -45,10 +47,12 @@ self.addEventListener('fetch', event => {
       .then(response => {
         if (response.ok && APP_SHELL.includes(url.pathname)) {
           const copy = response.clone();
+
           caches.open(CACHE_NAME).then(cache => {
             cache.put(event.request, copy);
           });
         }
+
         return response;
       })
       .catch(() =>
@@ -64,4 +68,5 @@ self.addEventListener('fetch', event => {
           return Response.error();
         })
       )
+  );
 });

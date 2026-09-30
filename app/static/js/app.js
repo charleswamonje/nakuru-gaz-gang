@@ -501,7 +501,6 @@
   if(resetRequest)
     resetRequest.addEventListener('submit', async e => {
       e.preventDefault();
-
       await sendForm(
         e.target,
         resetRequest.dataset.url,

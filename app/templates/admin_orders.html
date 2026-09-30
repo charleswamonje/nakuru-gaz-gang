@@ -8,138 +8,214 @@
 </head>
 <body>
 
-<header>
-    <strong>DANSTAR GAS DELIVERY</strong>
-    <span>ADMIN — ORDERS</span>
+<header class="admin-orders-header">
+    <div>
+        <strong>DANSTAR GAS DELIVERY</strong>
+        <span>ADMIN — ORDERS</span>
+    </div>
+    <a href="{{ url_for('main.admin_dashboard') }}">DASHBOARD</a>
 </header>
 
-<main>
-    <h1>Customer Orders</h1>
-    <p>Orders received through the Danstar Gas Delivery website.</p>
+<main class="admin-orders-page">
+
+    <div class="admin-orders-title">
+        <div>
+            <p class="eyebrow">ORDER MANAGEMENT</p>
+            <h1>Customer Orders</h1>
+            <p>Manage incoming orders, payments and delivery progress.</p>
+        </div>
+        <div class="orders-count">
+            <strong>{{ order_rows|length }}</strong>
+            <span>Orders</span>
+        </div>
+    </div>
 
     {% if order_rows %}
+
         {% for row in order_rows %}
-        <section class="card" style="margin-bottom:20px;">
-            <h2>Order #{{ row.order.id }}</h2>
 
-            <p><strong>Customer:</strong> {{ row.order.customer_name }}</p>
-            <p><strong>Phone:</strong> {{ row.order.phone }}</p>
-            <p><strong>Delivery area:</strong> {{ row.order.delivery_area }}</p>
-            <p><strong>Notes:</strong> {{ row.order.notes or "None" }}</p>
-            <p><strong>Total:</strong> KSh {{ row.order.total }}</p>
-            <p><strong>Order status:</strong> {{ row.order.status }}</p>
-            <p><strong>Payment status:</strong> {{ row.order.payment_status }}</p>
-            <p><strong>Payment method:</strong> {{ row.order.payment_method or "Not selected" }}</p>
-            <p><strong>Payment reference:</strong> {{ row.order.payment_reference or "Not available" }}</p>
-            <p><strong>Received:</strong> {{ row.order.created_at }}</p>
+        <section class="admin-order-card">
 
-            <h3>Admin Controls</h3>
-            <form class="admin-order-form" method="post" action="{{ url_for('main.admin_update_order', order_id=row.order.id) }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-                <label for="status-{{ row.order.id }}">Order status</label>
-                <select id="status-{{ row.order.id }}" name="status">
-                    {% for value, label in [
-                        ("received", "Received"),
-                        ("confirmed", "Confirmed"),
-                        ("preparing", "Preparing"),
-                        ("out_for_delivery", "Out for Delivery"),
-                        ("delivered", "Delivered"),
-                        ("cancelled", "Cancelled")
-                    ] %}
-                        <option value="{{ value }}" {% if row.order.status == value %}selected{% endif %}>
-                            {{ label }}
-                        </option>
-                    {% endfor %}
-                </select>
-
-                <label for="payment-status-{{ row.order.id }}">Payment status</label>
-                <select id="payment-status-{{ row.order.id }}" name="payment_status">
-                    {% for value, label in [
-                        ("pending", "Pending"),
-                        ("paid", "Paid"),
-                        ("failed", "Failed"),
-                        ("refunded", "Refunded")
-                    ] %}
-                        <option value="{{ value }}" {% if row.order.payment_status == value %}selected{% endif %}>
-                            {{ label }}
-                        </option>
-                    {% endfor %}
-                </select>
-
-                <label for="payment-method-{{ row.order.id }}">Payment method</label>
-                <select id="payment-method-{{ row.order.id }}" name="payment_method">
-                    <option value="" {% if not row.order.payment_method %}selected{% endif %}>Not selected</option>
-                    <option value="mpesa" {% if row.order.payment_method == "mpesa" %}selected{% endif %}>M-PESA</option>
-                    <option value="paypal" {% if row.order.payment_method == "paypal" %}selected{% endif %}>PayPal</option>
-                    <option value="cash" {% if row.order.payment_method == "cash" %}selected{% endif %}>Cash</option>
-                </select>
-
-                <label for="payment-reference-{{ row.order.id }}">Payment reference</label>
-                <input
-                    id="payment-reference-{{ row.order.id }}"
-                    type="text"
-                    name="payment_reference"
-                    value="{{ row.order.payment_reference or '' }}"
-                    maxlength="120"
-                    placeholder="Transaction/reference number"
-                >
-
-                <label for="admin-note-{{ row.order.id }}">Admin note</label>
-                <textarea
-                    id="admin-note-{{ row.order.id }}"
-                    name="admin_note"
-                    maxlength="500"
-                    rows="3"
-                    placeholder="Optional note about this status change"
-                ></textarea>
-
-                <button type="submit">SAVE ORDER CHANGES</button>
-            </form>
-
-            <h3>Items</h3>
-
-            {% if row.items %}
-                <ul>
-                {% for row_item in row['items'] %}
-                    <li>
-                        <strong>{{ row_item.product_name }}</strong>
-                        — Quantity: {{ row_item.item.quantity }}
-                        — Unit price: KSh {{ row_item.item.unit_price }}
-                        — Line total: KSh {{ row_item.line_total }}
-                    </li>
-                {% endfor %}
-                </ul>
-            {% else %}
-                <p>No order items recorded.</p>
-            {% endif %}
-
-            <h3>Status History</h3>
-
-            {% if row.history %}
-                <div class="status-history">
-                    {% for history_item in row.history %}
-                    <div class="card" style="margin:8px 0;padding:12px;">
-                        <strong>{{ history_item.status|replace("_", " ")|title }}</strong>
-                        <br>
-                        <small>{{ history_item.created_at }}</small>
-                        {% if history_item.note %}
-                        <p style="margin:6px 0 0;">{{ history_item.note }}</p>
-                        {% endif %}
-                    </div>
-                    {% endfor %}
+            <div class="admin-order-top">
+                <div>
+                    <p class="order-label">CUSTOMER ORDER</p>
+                    <h2>Order #{{ row.order.id }}</h2>
                 </div>
-            {% else %}
-                <p>No status history recorded yet.</p>
-            {% endif %}
+
+                <div class="order-status-badge status-{{ row.order.status }}">
+                    {{ row.order.status|replace("_", " ")|title }}
+                </div>
+            </div>
+
+            <div class="admin-order-summary">
+
+                <div class="order-customer">
+                    <h3>Customer</h3>
+                    <p class="customer-name">{{ row.order.customer_name }}</p>
+                    <p>{{ row.order.phone }}</p>
+                    <p>{{ row.order.delivery_area }}</p>
+                </div>
+
+                <div class="order-financial">
+                    <h3>Order Total</h3>
+                    <strong>KSh {{ row.order.total }}</strong>
+                    <p>Payment: {{ row.order.payment_status|replace("_", " ")|title }}</p>
+                    <p>Method: {{ row.order.payment_method|replace("_", " ")|title if row.order.payment_method else "Not selected" }}</p>
+                </div>
+
+                <div class="order-meta">
+                    <h3>Order Information</h3>
+                    <p><strong>Received:</strong> {{ row.order.created_at }}</p>
+                    <p><strong>Reference:</strong> {{ row.order.payment_reference or "Not available" }}</p>
+                    <p><strong>Notes:</strong> {{ row.order.notes or "None" }}</p>
+                </div>
+
+            </div>
+
+            <div class="admin-order-section">
+                <h3>Admin Controls</h3>
+
+                <form class="admin-order-form" method="post" action="{{ url_for('main.admin_update_order', order_id=row.order.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="admin-control-grid">
+
+                        <div class="admin-field">
+                            <label for="status-{{ row.order.id }}">Order status</label>
+                            <select id="status-{{ row.order.id }}" name="status">
+                                {% for value, label in [
+                                    ("received", "Received"),
+                                    ("confirmed", "Confirmed"),
+                                    ("preparing", "Preparing"),
+                                    ("out_for_delivery", "Out for Delivery"),
+                                    ("delivered", "Delivered"),
+                                    ("cancelled", "Cancelled")
+                                ] %}
+                                    <option value="{{ value }}" {% if row.order.status == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="admin-field">
+                            <label for="payment-status-{{ row.order.id }}">Payment status</label>
+                            <select id="payment-status-{{ row.order.id }}" name="payment_status">
+                                {% for value, label in [
+                                    ("pending", "Pending"),
+                                    ("paid", "Paid"),
+                                    ("failed", "Failed"),
+                                    ("refunded", "Refunded")
+                                ] %}
+                                    <option value="{{ value }}" {% if row.order.payment_status == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="admin-field">
+                            <label for="payment-method-{{ row.order.id }}">Payment method</label>
+                            <select id="payment-method-{{ row.order.id }}" name="payment_method">
+                                <option value="" {% if not row.order.payment_method %}selected{% endif %}>Not selected</option>
+                                <option value="mpesa" {% if row.order.payment_method == "mpesa" %}selected{% endif %}>M-PESA</option>
+                                <option value="paypal" {% if row.order.payment_method == "paypal" %}selected{% endif %}>PayPal</option>
+                                <option value="cash" {% if row.order.payment_method == "cash" %}selected{% endif %}>Cash</option>
+                            </select>
+                        </div>
+
+                        <div class="admin-field">
+                            <label for="payment-reference-{{ row.order.id }}">Payment reference</label>
+                            <input
+                                id="payment-reference-{{ row.order.id }}"
+                                type="text"
+                                name="payment_reference"
+                                value="{{ row.order.payment_reference or '' }}"
+                                maxlength="120"
+                                placeholder="Transaction/reference number"
+                            >
+                        </div>
+
+                        <div class="admin-field admin-field-wide">
+                            <label for="admin-note-{{ row.order.id }}">Admin note</label>
+                            <textarea
+                                id="admin-note-{{ row.order.id }}"
+                                name="admin_note"
+                                maxlength="500"
+                                rows="3"
+                                placeholder="Optional note about this status change"
+                            ></textarea>
+                        </div>
+
+                    </div>
+
+                    <button class="admin-save-order" type="submit">
+                        SAVE ORDER CHANGES
+                    </button>
+                </form>
+            </div>
+
+            <div class="admin-order-section">
+                <h3>Items</h3>
+
+                {% if row.items %}
+                    <div class="order-items-list">
+                        {% for row_item in row['items'] %}
+                        <div class="order-item-row">
+                            <div>
+                                <strong>{{ row_item.product_name }}</strong>
+                                <span>Quantity: {{ row_item.item.quantity }}</span>
+                            </div>
+                            <div>
+                                <span>KSh {{ row_item.item.unit_price }} each</span>
+                                <strong>KSh {{ row_item.line_total }}</strong>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>No order items recorded.</p>
+                {% endif %}
+            </div>
+
+            <div class="admin-order-section">
+                <h3>Status History</h3>
+
+                {% if row.history %}
+                    <div class="status-history">
+                        {% for history_item in row.history %}
+                        <div class="status-history-item">
+                            <div class="status-history-marker"></div>
+                            <div>
+                                <strong>{{ history_item.status|replace("_", " ")|title }}</strong>
+                                <small>{{ history_item.created_at }}</small>
+                                {% if history_item.note %}
+                                <p>{{ history_item.note }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="muted-text">No status history recorded yet.</p>
+                {% endif %}
+            </div>
+
         </section>
+
         {% endfor %}
+
     {% else %}
-        <p>No orders have been received.</p>
+        <div class="admin-empty-state">
+            <h2>No orders yet</h2>
+            <p>Orders received from the website will appear here.</p>
+        </div>
     {% endif %}
 
-    <p><a href="/admin">Back to Admin Dashboard</a></p>
-</main>
+    <p class="admin-back-link">
+        <a href="{{ url_for('main.admin_dashboard') }}">Back to Admin Dashboard</a>
+    </p>
 
+</main>
 </body>
 </html>

@@ -27,6 +27,11 @@
     }
 
     renderCart();
+
+    const orderSection = document.getElementById("order");
+    if(orderSection){
+      orderSection.scrollIntoView({behavior: "smooth", block: "start"});
+    }
   };
 
   function renderCart(){

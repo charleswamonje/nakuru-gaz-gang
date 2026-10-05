@@ -1833,3 +1833,52 @@ footer {
         min-height: auto;
     }
 }
+
+/* Customer account form visibility */
+.account-panel {
+  color: #111827;
+}
+
+.account-panel h1,
+.account-panel p,
+.account-panel label {
+  color: #111827;
+}
+
+.account-panel input {
+  color: #111827;
+  background: #ffffff;
+  border: 2px solid #64748b;
+  font-weight: 600;
+}
+
+.account-panel input::placeholder {
+  color: #475569;
+  opacity: 1;
+}
+
+.account-panel input:focus {
+  border-color: #17324d;
+  outline: 2px solid rgba(23,50,77,.15);
+}
+
+.account-panel button {
+  color: #ffffff;
+  background: #17324d;
+  font-weight: 700;
+}
+
+.account-panel #result {
+  color: #111827;
+  font-weight: 700;
+}
+
+.account-panel .error {
+  color: #b91c1c;
+  font-weight: 700;
+}
+
+.account-panel .success {
+  color: #166534;
+  font-weight: 700;
+}

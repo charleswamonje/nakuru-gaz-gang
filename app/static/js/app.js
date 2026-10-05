@@ -444,29 +444,18 @@
 
   async function sendForm(form,url,resultId){
     const result = document.getElementById(resultId);
-
     try{
-      const r = await post(url,new FormData(form));
-
-      const d = await r.json().catch(() => ({
-        message: r.ok ? 'Done' : 'Request failed'
-      }));
-
-      result.textContent =
-        d.error ||
-        d.message ||
-        (r.ok ? 'Done' : 'Request failed');
-
+      const body = new URLSearchParams();
+      for(const [key,value] of new FormData(form)) body.append(key,value);
+      const r = await post(url,body,{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"});
+      const d = await r.json().catch(() => ({message:r.ok ? "Done" : "Request failed"}));
+      result.textContent = d.error || d.message || (r.ok ? "Done" : "Request failed");
       return r;
-
     }catch(e){
-      result.textContent =
-        'Network error. Please try again.';
-
+      result.textContent = "Network error. Please try again.";
       return null;
     }
   }
-
   const register = document.getElementById('register');
 
   if(register)
